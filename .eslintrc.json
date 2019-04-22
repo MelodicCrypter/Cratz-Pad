@@ -1,0 +1,31 @@
+{
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es6": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:security/recommended",
+        "eslint-config-airbnb-improved",
+        "plugin:css-modules/recommended"
+    ],
+    "globals": {
+        "Atomics": "readonly",
+        "SharedArrayBuffer": "readonly"
+    },
+    "parserOptions": {
+        "ecmaVersion": 2018
+    },
+    "plugins": [
+        "security",
+        "css-modules"
+    ],
+    "rules": {
+        "no-console": 0,
+        "indent": ["error", 4],
+        "sort-imports": "off",
+        "sort-keys": "off",
+        "no-unused-vars": "off"
+    }
+}

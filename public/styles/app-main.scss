@@ -1,0 +1,267 @@
+/*
+* This is the main SASS file, you can put all styles here.
+* But if you prefer CSS, just use the other file named: app-main-raw.styles
+* All these styles will be bundled with WebPack
+*/
+
+// FontAwesome 5
+@import "~@fortawesome/fontawesome-free/css/all.css";
+
+// Bootstrap
+@import "~bootstrap/scss/bootstrap";
+
+// emoione by twizdev
+@import "~rm-emoji-picker/dist/emojipicker.css";
+
+// Public Assets
+$bgImg : '../../public/img/testimg.jpg';
+
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+  outline: none;
+}
+a,
+a:focus,
+a:hover {
+  color: #fff;
+}
+.btn-secondary,
+.btn-secondary:hover,
+.btn-secondary:focus {
+  color: #333;
+  text-shadow: none;
+  background-color: #fff;
+  border: .05rem solid #fff;
+}
+html,
+body {
+  height: 100%;
+  background-color: #333;
+}
+body {
+  display: -ms-flexbox;
+  display: flex;
+  color: #fff;
+  text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
+}
+.cover-container {
+  max-width: 100em;
+}
+.masthead {
+  margin-bottom: 2rem;
+}
+.masthead-brand {
+  margin-bottom: 0;
+  color: #d85c72;
+  font-family: Euphorigenic;
+  letter-spacing: 2px;
+}
+.nav-masthead {
+  float: right;
+  .nav-link {
+    padding: .25rem 0;
+    font-weight: 700;
+    color: rgba(255, 255, 255, .5);
+    background-color: transparent;
+    border-bottom: .25rem solid transparent;
+    & + .nav-link {
+      margin-left: 1rem;
+    }
+  }
+  .active {
+    color: #fff;
+    border-bottom-color: #fff;
+  }
+}
+.nav-masthead .nav-link:hover,
+.nav-masthead .nav-link:focus {
+  border-bottom-color: rgba(255, 255, 255, .25);
+}
+@media (min-width: 48em) {
+    .masthead-brand {
+        float: left;
+    }
+    .nav-masthead {
+      float: right;
+    }
+}
+
+//textarea {
+//  font-size: 1.6em;
+//  background: transparent;
+//  border: none;
+//  color: grey;
+//  font-weight: 100;
+//  height: 600px;
+//  max-height: 100%;
+//}
+
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent; /* make scrollbar transparent */
+}
+
+#textarea {
+  -moz-appearance: textfield-multiline;
+  -webkit-appearance: textarea;
+  font-size: 1.6em;
+  color: #bdbdbd;
+  background: transparent;
+  padding: 2px;
+  resize: none !important;
+  height: 82vh;
+  max-height: 100vh;
+  overflow: auto;
+  white-space: pre-wrap;
+  text-align: left;
+  font-weight: 100;
+
+  &:focus {
+    border: none !important;
+    outline: 0px solid transparent;
+  }
+}
+.bold {
+  font-weight: bold;
+}
+.cover {
+  padding: 0 1.5rem;
+  .btn-lg {
+    padding: .75rem 1.25rem;
+    font-weight: 700;
+  }
+}
+.mastfoot {
+  color: rgba(255, 255, 255, .5);
+}
+#main-box {
+  margin-top: 70px;
+}
+header {
+  background: #333333;
+  .icons {
+    cursor: pointer;
+  }
+}
+#textarea {
+  &::-webkit-input-placeholder {
+    color: rgba(187, 187, 187, 0.48) !important;
+  }
+  &:-moz-placeholder {
+    color: rgba(187, 187, 187, 0.48) !important;
+  }
+  &::-moz-placeholder {
+    color: rgba(187, 187, 187, 0.48) !important;
+  }
+  &:-ms-input-placeholder {
+    color: rgba(187, 187, 187, 0.48) !important;
+  }
+  &::placeholder {
+    color: rgba(187, 187, 187, 0.48) !important;
+  }
+}
+.mode-text {
+  color: #655454 !important;
+}
+#footer-nav {
+  background: #2d2d2d;
+  .icons {
+    font-size: 1.2em !important;
+    cursor: pointer;
+  }
+  .divider {
+    color: #3c3535 !important;
+  }
+}
+// for the Emoji Box
+.svg-menus {
+  display: inline-block;
+  width: 28px;
+}
+
+#emoji-button {
+  display: inline-block;
+  width: 34px;
+  position: fixed;
+  right: 42px !important;
+  bottom: 88px;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+#emoji-picker {
+  text-shadow: none;
+  position: fixed !important;
+  right: 42px !important;
+  left: unset !important;
+  top: unset !important;
+  bottom: 134px;
+
+  > .emoji-header {
+    padding-bottom: 4px !important;
+  }
+
+  .emoji-char-wrapper {
+    width: 58px !important;
+    font-size: 36px !important;
+  }
+
+  .emoji-search {
+    display: none !important;
+  }
+
+  .select-category::after,
+  .select-category.active::after {
+    margin-top: 1px !important;
+  }
+
+  .emoji-content {
+    height: 310px !important;
+    background: linear-gradient(90deg, rgba(198,175,67,0.4948179955575981) 16%, rgb(76, 156, 214) 100%);
+  }
+
+  &.TooltipAbove::after {
+    background: #4fa8e6 !important;
+    left: unset !important;
+    right: 14px !important;
+  }
+
+  .emoji-title-overlay {
+    display: none;
+  }
+
+  .category-title {
+    font-size: 0px !important;
+  }
+
+  .search-section {
+    top: -3px;
+    border-radius: 60%;
+  }
+
+  .default-content {
+    font-size: 10px !important;
+    color: white !important;
+    top: -6px !important;
+  }
+
+  .default-content > span {
+    color: #fff !important;
+    line-height: 30px !important;
+  }
+
+  #emoji-name.name-only {
+    margin-top: 24px !important;
+    color: white !important;
+  }
+
+  .emoji-footer {
+    height: 60px;
+    background: linear-gradient(90deg, rgba(130, 127, 169, 0.8729692560617998) 0%, rgba(187, 169, 86, 0.78) 35%, rgb(64, 165, 243) 100%);
+  }
+}
