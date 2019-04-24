@@ -115,7 +115,8 @@ body {
   height: 82vh;
   max-height: 100vh;
   overflow: auto;
-  white-space: pre-wrap;
+  white-space: pre-line;
+  display: inline-block;
   text-align: left;
   font-weight: 100;
 
@@ -126,6 +127,15 @@ body {
 }
 .bold {
   font-weight: bold;
+}
+.italic {
+  font-style: italic;
+}
+.underline {
+  text-decoration: underline;
+}
+.holder {
+  display: inline !important;
 }
 .cover {
   padding: 0 1.5rem;

@@ -72,7 +72,7 @@ function createRange(node, chars, range) {
 function setCaretPos(target, pos) {
     if (pos >= 0) {
         const selection = document.getSelection();
-        const range = createRange(target.parentNode, { count: `${pos + 7}` });
+        const range = createRange(target.parentNode, { count: `${pos + 10}` });
 
         if (range) {
             range.collapse(false);
@@ -82,4 +82,9 @@ function setCaretPos(target, pos) {
     }
 }
 
-export { getCaretPos, setCaretPos, putCursorAtEnd, createRange };
+export {
+    getCaretPos,
+    setCaretPos,
+    putCursorAtEnd,
+    createRange,
+};

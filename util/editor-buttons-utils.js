@@ -41,17 +41,8 @@ function toggleHotKeys(target) {
     return disableShortcuts;
 }
 
-function selectionIsBold(element) {
-    let isBold = false;
-    if (document.queryCommandState) {
-        isBold = document.queryCommandState('bold');
-    }
-
-    return isBold;
-}
-
 function themeToggle(theme) {
     console.log(theme);
 }
 
-export { selectionIsBold, themeToggle, toggleHotKeys };
+export { themeToggle, toggleHotKeys };
