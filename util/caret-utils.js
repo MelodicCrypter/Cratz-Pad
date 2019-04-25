@@ -21,7 +21,7 @@ function getCaretPos(target) {
 
 // Snippet by ..., but modified a bit, to pur cursor at the end of texts
 function putCursorAtEnd(target) {
-    const textNode = target.firstChild;
+    const textNode = target.lastChild;
     const caret = textNode.length;
     const range = document.createRange();
     const sel = window.getSelection();
@@ -64,7 +64,6 @@ function createRange(node, chars, range) {
             }
         }
     }
-
     return range;
 }
 
@@ -72,7 +71,7 @@ function createRange(node, chars, range) {
 function setCaretPos(target, pos) {
     if (pos >= 0) {
         const selection = document.getSelection();
-        const range = createRange(target.parentNode, { count: `${pos + 10}` });
+        const range = createRange(target, { count: `${pos}` });
 
         if (range) {
             range.collapse(false);

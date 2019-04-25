@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const textarea = document.getElementById('textarea');
     // Query version of some variables above, because EmojiPicker uses vanilla
     const emojiButtonJQuery = $('#emoji-button');
-    const textareaJQuery = $('#textarea');
+    const textareaJQuery = $('div[contenteditable="true"]');
 
     // the Cratz Pad - EmojiPicker settings
     const cratzPad = new EmojiPicker({
@@ -108,6 +108,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let disableShortcuts = false; // status if Hot-Keys are enabled or not
     let winSel = {}; // object that will contain all window.getSelection
     let caretPosition; // for the cursor position
+    let rangeStart;
+    let rangeEnd;
+    const ranger = {};
 
     // => Listening for keydown events
     document.addEventListener('keydown', (e) => {
@@ -143,16 +146,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ========> Listen for any texts selection
     // This event is very vital cause in this section, selectedTexts, caretPosition, and textState will be set
-    $('div[contenteditable="true"]').bind('mouseup keydown mousedown touchend', (e) => {
+    textareaJQuery.bind('mouseup keydown mousedown touchend', (e) => {
         // disable double click for selecting texts
         if (e.detail > 1) {
             e.preventDefault();
             e.stopPropagation();
         }
 
+        // if there is a selection
         if (window.getSelection) {
-            caretPosition = Caret.getCaretPos(textarea);
-            winSel = TextareaEditor.getSelections();
+            // firefox works better if focusNode is used
+            if (is.firefox()) {
+                caretPosition = Caret.getCaretPos(textarea);
+                winSel = TextareaEditor.mozGetSelections();
+            }
+            // chrome works better if anchorNode is used
+            if (is.chrome()) {
+                caretPosition = Caret.getCaretPos(textarea);
+                winSel = TextareaEditor.chromeGetSelections();
+
+                const parentDiv = textareaJQuery.text(); // jquery text() should be used
+                rangeStart = parentDiv.indexOf(winSel.selectedTexts);
+                rangeEnd = rangeStart + winSel.selectedTextsLen;
+                if (rangeStart >= 0 && rangeEnd >= 0) {
+                    console.log(`start: ${rangeStart}`);
+                    console.log(`end: ${rangeEnd}`);
+                }
+            }
         }
 
         // if (e.shiftKey) {
@@ -166,12 +186,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // }
     });
 
-    hotkeys('ctrl+a,cmd+a', (e, h) => {
-        if (window.getSelection) {
-            caretPosition = Caret.getCaretPos(textarea);
-            winSel = TextareaEditor.getSelections();
-        }
-    });
+    // hotkeys('ctrl+a,cmd+a,command+a', (e, h) => {
+    //     e.preventDefault();
+    //     // if (window.getSelection) {
+    //     //     caretPosition = Caret.getCaretPos(textarea);
+    //     //     winSel = TextareaEditor.getSelections();
+    //     // }
+    //     alert('pressed cmd a');
+    // });
 
     // ===============================================================================
     // Button Menus : Click Events
@@ -189,24 +211,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========> When B button is clicked
-    $('#edit-bold').on('click', () => {
+    $('#edit-bold').on('click', (e) => {
+        const range = TextareaEditor.RangeAtIndex(textarea, rangeStart, rangeEnd);
+        // range.selectNode(textarea);
+        // range.setStart(textarea.firstChild, rangeStart);
+        // range.setEnd(textarea.firstChild, rangeEnd);
+        const sel = document.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+
+        document.execCommand('delete', false, null);
         // detect if selectedTexts is not empty or undefined
         if (winSel.selectedTexts !== undefined && winSel.selectedTexts !== '') {
             // determine these elements first if already contained inside <STRONG> or not
             if (winSel.textNodeVal === 'strong') {
                 const tag = winSel.textNodeVal;
 
-                if (tag === 'strong') {
-                    winSel.addAttToParent.setAttribute('tag-selected', 'true');
-                    const tagSelected = $('[tag-selected]');
-                    tagSelected.remove();
-                    const unStrong = `${winSel.selectedTexts}`;
-                    TextareaEditor.putContentAtCaret(unStrong);
-                }
+                winSel.addAttToParent.setAttribute('tag-selected', 'true');
+                const tagSelected = $('[tag-selected]');
+                tagSelected.remove();
+                const unStrong = `${winSel.selectedTexts}`;
+                // TextareaEditor.putContentAtCaret(unStrong);
+                // Caret.setCaretPos(textarea, caretPosition);
+                // TextareaEditor.insertTestText(textarea, unStrong);
             } else {
                 // if selected is clean, no <STRONG> tag yet
                 const newSpanStrong = `<strong>${winSel.selectedTexts}</strong>`;
-                TextareaEditor.putContentAtCaret(newSpanStrong);
+                // Caret.setCaretPos(textarea, caretPosition);
+                // TextareaEditor.insertTestText(textarea, newSpanStrong);
+                // TextareaEditor.putContentAtCaret(newSpanStrong);
+                // TextareaEditor.insertTestText(textarea, newSpanStrong);
+
+                // TextareaEditor.textAddRAnge('textarea');
+                // document.execCommand('delete', false, null);
             }
         }
     });

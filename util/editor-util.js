@@ -1,5 +1,7 @@
 // Utilities for the Editor
 
+import createRange from './caret-utils';
+
 // Normalizer for jQuery objects, prefer dom nodes
 function nodeNormalizer(target) {
     let domTarget = target;
@@ -26,14 +28,14 @@ function reloadContent(target, newContent) {
     }
 }
 
-function getSelections() {
+function mozGetSelections() {
     const winSel = window.getSelection();
 
     const selections = {
         selectedTexts: winSel.toString(),
         selectedTextsLen: winSel.toString().length,
         textNodeVal: winSel.focusNode.parentElement.nodeName.toString().toLowerCase().trim(),
-        addClassToParent: winSel.focusNode.parentElement.parentElement.classList,
+        addClassToParent: winSel.focusNode.parentElement.classList,
         addIdToParent: winSel.focusNode.parentElement,
         addAttToParent: winSel.focusNode.parentElement,
     };
@@ -41,9 +43,25 @@ function getSelections() {
     return selections;
 }
 
+function chromeGetSelections() {
+    const winSel = window.getSelection();
+
+    const selections = {
+        selectedTexts: winSel.toString(),
+        selectedTextsLen: winSel.toString().length,
+        parent: winSel.anchorNode.parentElement,
+        textNodeVal: winSel.anchorNode.parentElement.nodeName.toString().toLowerCase().trim(),
+        addClassToParent: winSel.anchorNode.parentElement.classList,
+        addIdToParent: winSel.anchorNode.parentElement,
+        addAttToParent: winSel.anchorNode.parentElement,
+    };
+
+    return selections;
+}
+
 // snippet by Xeoncross, but modified a bit
 // https://jsfiddle.net/Xeoncross/4tUDk/
-function putContentAtCaret(html) {
+function putContentAtCaret(content) {
     let range, sel;
 
     if (window.getSelection) {
@@ -57,7 +75,7 @@ function putContentAtCaret(html) {
             // Range.createContextualFragment() would be useful here but is
             // non-standard and not supported in all browsers (IE9, for one)
             const el = document.createElement('div');
-            el.innerHTML = html;
+            el.innerHTML = content;
             const frag = document.createDocumentFragment();
             let node;
             let lastNode;
@@ -78,38 +96,57 @@ function putContentAtCaret(html) {
         }
     } else if (document.selection && document.selection.type !== 'Control') {
         // IE < 9
-        document.selection.createRange().pasteHTML(html);
+        document.selection.createRange().pasteHTML(content);
     }
 }
 
-function selectionIsBold() {
-    let isBold = false;
+// snippet by TooTallNate, https://github.com/webmodules/range-at-index
+function RangeAtIndex(el, index, offset, range) {
+    const doc = el.ownerDocument;
 
-    if (document.queryCommandState) {
-        isBold = document.queryCommandState('bold');
+    if (!range) {
+        range = doc.createRange();
     }
 
-    return isBold;
-}
+    const iterator = doc.createNodeIterator(el, NodeFilter.SHOW_TEXT, null, false);
+    const start = {};
+    const end = {};
+    let len, node, val;
 
-function toBold(target, selectedTexts) {
-    const boldTexts = `<span class="bold">${selectedTexts}</span>`;
+    while (node = iterator.nextNode()) {
+        val = node.nodeValue;
+        len = val.length;
 
-    target.html((index, text) => text.replace(selectedTexts, boldTexts));
-}
+        if (!start.node && len > index) {
+            start.node = node;
+            start.offset = index;
+        }
 
-function deBold(target, selectedTexts) {
-    const deBoldTexts = `<span class="debold">${selectedTexts}</span>`;
+        if (!end.node && len >= offset) {
+            end.node = node;
+            end.offset = offset;
+        }
 
-    target.html((index, text) => text.replace(selectedTexts, deBoldTexts));
+        index -= len;
+        offset -= len;
+    }
+
+    // update the range with the start and end offsets
+    if (start.node) {
+        range.setStart(start.node, start.offset);
+    }
+    if (end.node) {
+        range.setEnd(end.node, end.offset);
+    }
+
+    return range;
 }
 
 export {
     reloadContent,
-    selectionIsBold,
     nodeNormalizer,
-    getSelections,
-    toBold,
-    deBold,
+    mozGetSelections,
+    chromeGetSelections,
     putContentAtCaret,
+    RangeAtIndex,
 };
