@@ -2,7 +2,7 @@
 
 import createRange from './caret-utils';
 
-// Normalizer for jQuery objects, prefer dom nodes
+// Normalizer for jQuery objects, if prefer dom nodes
 function nodeNormalizer(target) {
     let domTarget = target;
 
@@ -142,6 +142,16 @@ function RangeAtIndex(el, index, offset, range) {
     return range;
 }
 
+// Menu button enabler, disabler
+function enableMenuButtons(target) {
+    const domTargget = nodeNormalizer(target);
+
+    if (domTargget.classList.contains('disabled')) {
+        //domTargget.classList.remove('disabled');
+        console.log('yes');
+    }
+}
+
 export {
     reloadContent,
     nodeNormalizer,
@@ -149,4 +159,5 @@ export {
     chromeGetSelections,
     putContentAtCaret,
     RangeAtIndex,
+    enableMenuButtons,
 };

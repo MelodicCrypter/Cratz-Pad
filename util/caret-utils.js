@@ -64,6 +64,7 @@ function createRange(node, chars, range) {
             }
         }
     }
+
     return range;
 }
 

@@ -20,7 +20,6 @@ import hotkeys from 'hotkeys-js';
 import is from '../../node_modules/is_js/is.min';
 import '../../node_modules/bootstrap/dist/js/bootstrap.bundle';
 
-
 // Assets or Files
 import peopleLogo from '../img/neutral_decision.svg';
 import natureLogo from '../img/landscape.svg';
@@ -98,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // => emoji button svg
     emojiButtonJQuery.html(emojiButtonSVG);
+
     // => Focus textarea on load, put cursor at the end
     Caret.putCursorAtEnd(textarea);
 
@@ -108,9 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let disableShortcuts = false; // status if Hot-Keys are enabled or not
     let winSel = {}; // object that will contain all window.getSelection
     let caretPosition; // for the cursor position
-    let rangeStart;
-    let rangeEnd;
-    const ranger = {};
+    let rangeStart; // will hold the start of the selected range
+    let rangeEnd; // will hold the end of the selected range
 
     // => Listening for keydown events
     document.addEventListener('keydown', (e) => {
@@ -147,34 +146,38 @@ document.addEventListener('DOMContentLoaded', () => {
     // ========> Listen for any texts selection
     // This event is very vital cause in this section, selectedTexts, caretPosition, and textState will be set
     textareaJQuery.bind('mouseup keydown mousedown touchend', (e) => {
-        // disable double click for selecting texts
+        // 1. Disable double click for selecting texts
         if (e.detail > 1) {
             e.preventDefault();
             e.stopPropagation();
         }
 
-        // if there is a selection
+        // 2. If there is a selection
         if (window.getSelection) {
-            // firefox works better if focusNode is used
+            console.log(window.getSelection().rangeCount);
+            // Enable main menu buttons, B I U etc...
+            //TextareaEditor.enableMenuButtons($('.nav-link'));
+
+            // Determine which browser
+            // Firefox works better if focusNode is used
             if (is.firefox()) {
                 caretPosition = Caret.getCaretPos(textarea);
-                winSel = TextareaEditor.mozGetSelections();
+                winSel = TextareaEditor.mozGetSelections(); // object of selections for mozilla
             }
-            // chrome works better if anchorNode is used
+
+            // Chrome works better if anchorNode is used
             if (is.chrome()) {
                 caretPosition = Caret.getCaretPos(textarea);
-                winSel = TextareaEditor.chromeGetSelections();
+                winSel = TextareaEditor.chromeGetSelections(); // object of selections for chrome
 
+                // Get the start and end ranges, so that we can mimick, only needed if chrome
                 const parentDiv = textareaJQuery.text(); // jquery text() should be used
-                rangeStart = parentDiv.indexOf(winSel.selectedTexts);
-                rangeEnd = rangeStart + winSel.selectedTextsLen;
-                if (rangeStart >= 0 && rangeEnd >= 0) {
-                    console.log(`start: ${rangeStart}`);
-                    console.log(`end: ${rangeEnd}`);
-                }
+                rangeStart = parentDiv.indexOf(winSel.selectedTexts); // get the starting of the selection
+                rangeEnd = rangeStart + winSel.selectedTextsLen; // get the ending of the selection
             }
         }
 
+        // 3. If Shift key was used in selecting texts
         // if (e.shiftKey) {
         //     if (window.getSelection) {
         //         selectedTexts = window.getSelection().toString();
@@ -186,6 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // }
     });
 
+    // =======> Listen for any key combination shortcuts
     // hotkeys('ctrl+a,cmd+a,command+a', (e, h) => {
     //     e.preventDefault();
     //     // if (window.getSelection) {
@@ -209,41 +213,46 @@ document.addEventListener('DOMContentLoaded', () => {
         Caret.setCaretPos(textarea, (caretPosition));
     });
 
-
     // =========> When B button is clicked
     $('#edit-bold').on('click', (e) => {
-        const range = TextareaEditor.RangeAtIndex(textarea, rangeStart, rangeEnd);
-        // range.selectNode(textarea);
-        // range.setStart(textarea.firstChild, rangeStart);
-        // range.setEnd(textarea.firstChild, rangeEnd);
-        const sel = document.getSelection();
-        sel.removeAllRanges();
-        sel.addRange(range);
+        // 1. check if selectedTexts is empty or not
+        if (winSel.selectedTexts !== undefined || winSel.selectedTexts !== '') {
 
-        document.execCommand('delete', false, null);
-        // detect if selectedTexts is not empty or undefined
-        if (winSel.selectedTexts !== undefined && winSel.selectedTexts !== '') {
-            // determine these elements first if already contained inside <STRONG> or not
-            if (winSel.textNodeVal === 'strong') {
-                const tag = winSel.textNodeVal;
+        }
 
-                winSel.addAttToParent.setAttribute('tag-selected', 'true');
-                const tagSelected = $('[tag-selected]');
-                tagSelected.remove();
-                const unStrong = `${winSel.selectedTexts}`;
-                // TextareaEditor.putContentAtCaret(unStrong);
-                // Caret.setCaretPos(textarea, caretPosition);
-                // TextareaEditor.insertTestText(textarea, unStrong);
-            } else {
-                // if selected is clean, no <STRONG> tag yet
-                const newSpanStrong = `<strong>${winSel.selectedTexts}</strong>`;
-                // Caret.setCaretPos(textarea, caretPosition);
-                // TextareaEditor.insertTestText(textarea, newSpanStrong);
-                // TextareaEditor.putContentAtCaret(newSpanStrong);
-                // TextareaEditor.insertTestText(textarea, newSpanStrong);
+        // 2. Determine if chrome of firefox
+        // cause both browsers behave differently in handling the text selections
+        // MOZILLA FIREFOX
+        if (is.firefox()) {
 
-                // TextareaEditor.textAddRAnge('textarea');
-                // document.execCommand('delete', false, null);
+        }
+
+        // CHROME
+        if (is.chrome()) {
+            // detect if selectedTexts is not empty or undefined
+            if (winSel.selectedTexts !== undefined && winSel.selectedTexts !== '') {
+                // determine these elements first if already contained inside <STRONG> or not
+                if (winSel.textNodeVal === 'strong') {
+                    const tag = winSel.textNodeVal;
+                    const unStrong = `${winSel.selectedTexts}`;
+
+                    winSel.addAttToParent.setAttribute('tag-selected', 'true');
+                    $('[tag-selected]').remove();
+
+                    TextareaEditor.putContentAtCaret(unStrong);
+                } else {
+                    // if selected is clean, no <STRONG> tag yet
+                    const newSpanStrong = `<strong>${winSel.selectedTexts}</strong>`;
+                    const range = TextareaEditor.RangeAtIndex(textarea, rangeStart, rangeEnd);
+
+                    const sel = document.getSelection();
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+
+                    document.execCommand('delete', false, null);
+
+                    TextareaEditor.putContentAtCaret(newSpanStrong);
+                }
             }
         }
     });

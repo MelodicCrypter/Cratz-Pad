@@ -1,7 +1,5 @@
 // Utilities for the Button menus
 
-import nodeNormalizer from './editor-util';
-
 /**
  * Toggle enable or disable Hot-Keys
  * @param target    should be a jQuery object
