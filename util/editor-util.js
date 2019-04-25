@@ -1,7 +1,5 @@
 // Utilities for the Editor
 
-import createRange from './caret-utils';
-
 // Normalizer for jQuery objects, if prefer dom nodes
 function nodeNormalizer(target) {
     let domTarget = target;
@@ -59,9 +57,24 @@ function chromeGetSelections() {
     return selections;
 }
 
-// snippet by Xeoncross, but modified a bit
+// Menu button enabler
+// A jQuery object
+function enableMenuButtons(target) {
+    if (target.hasClass('disabled')) {
+        target.removeClass('disabled');
+    }
+}
+
+// Menu button disabler
+function disableMenuButtons(target) {
+    if (!target.hasClass('disabled')) {
+        target.addClass('disabled');
+    }
+}
+
+// snippet by Xeoncross, but modified it a bit
 // https://jsfiddle.net/Xeoncross/4tUDk/
-function putContentAtCaret(content) {
+function putContentAtCaret(content, rangeStart) {
     let range, sel;
 
     if (window.getSelection) {
@@ -100,7 +113,8 @@ function putContentAtCaret(content) {
     }
 }
 
-// snippet by TooTallNate, https://github.com/webmodules/range-at-index
+// snippet by TooTallNate,
+// https://github.com/webmodules/range-at-index
 function RangeAtIndex(el, index, offset, range) {
     const doc = el.ownerDocument;
 
@@ -142,14 +156,101 @@ function RangeAtIndex(el, index, offset, range) {
     return range;
 }
 
-// Menu button enabler, disabler
-function enableMenuButtons(target) {
-    const domTargget = nodeNormalizer(target);
+// Snipper by Candor, but modified it a bit
+// https://stackoverflow.com/questions/4811822/get-a-ranges-start-and-end-offsets-relative-to-its-parent-container
+function proRanger(editor) {
+    const getTextSelection = function (editor) {
+        const selection = window.getSelection();
 
-    if (domTargget.classList.contains('disabled')) {
-        //domTargget.classList.remove('disabled');
-        console.log('yes');
-    }
+        if (selection != null && selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+
+            return {
+                start: getTextLength(editor, range.startContainer, range.startOffset),
+                end: getTextLength(editor, range.endContainer, range.endOffset),
+            };
+        }
+
+        return null;
+    };
+
+    const getTextLength = function (parent, node, offset) {
+        let textLength = 0;
+
+        if (node.nodeName == '#text') {
+            textLength += offset;
+        } else {
+            for (let i = 0; i < offset; i++) {
+                textLength += getNodeTextLength(node.childNodes[i]);
+            }
+        }
+
+        if (node != parent) {
+            textLength += getTextLength(parent, node.parentNode, getNodeOffset(node));
+        }
+
+        return textLength;
+    };
+
+    const getNodeTextLength = function (node) {
+        let textLength = 0;
+
+        if (node.nodeName == 'BR') {
+            textLength = 1;
+        } else if (node.nodeName == '#text') {
+            textLength = node.nodeValue.length;
+        } else if (node.childNodes != null) {
+            for (let i = 0; i < node.childNodes.length; i++) {
+                textLength += getNodeTextLength(node.childNodes[i]);
+            }
+        }
+
+        return textLength;
+    };
+
+    const getNodeOffset = function (node) {
+        return node == null ? -1 : 1 + getNodeOffset(node.previousSibling);
+    };
+
+    const isEditor = function (element) {
+        return element != null && element.classList.contains('editor');
+    };
+
+    return {
+        start: getTextSelection(document.activeElement).start,
+        end: getTextSelection(document.activeElement).end,
+    };
+
+    // window.onload = function () {
+    //     editor = document.querySelector('.editor');
+    //     output = document.querySelector('#output');
+    //
+    //     document.addEventListener('selectionchange', handleSelectionChange);
+    // };
+    //
+    // const handleSelectionChange = function () {
+    //     if (isEditor(document.activeElement)) {
+    //         const textSelection = getTextSelection(document.activeElement);
+    //
+    //         if (textSelection != null) {
+    //             const text = document.activeElement.innerText;
+    //             const selection = text.slice(textSelection.start, textSelection.end);
+    //             print(`Selection: [${selection}] (Start: ${textSelection.start}, End: ${textSelection.end})`);
+    //         } else {
+    //             print('Selection is null!');
+    //         }
+    //     } else {
+    //         print('Select some text above');
+    //     }
+    // };
+
+    // const print = function (message) {
+    //     if (output != null) {
+    //         output.innerText = message;
+    //     } else {
+    //         console.log('output is null!');
+    //     }
+    // };
 }
 
 export {
@@ -160,4 +261,6 @@ export {
     putContentAtCaret,
     RangeAtIndex,
     enableMenuButtons,
+    disableMenuButtons,
+    proRanger,
 };
