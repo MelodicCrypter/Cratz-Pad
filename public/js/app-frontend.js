@@ -42,16 +42,22 @@ import toggler from '../../util/toggler-util';
 // ===============================================================================
 document.addEventListener('DOMContentLoaded', () => {
     // =======> EmojiPicker
+    // Parent container of the div or textarea
     const container = document.getElementById('main-box');
+
+    // Button for the emojis: jQuery and vanilla
     const emojiButton = document.getElementById('emoji-button');
+    const emojiButtonJQuery = $('#emoji-button');
+
+    // The 'textarea' which in this case is a contenteditable: both jQuery and vanilla
     const textarea = document.getElementById('textarea');
     const textareaEditor = document.getElementsByClassName('editor');
-    // Query version of some variables above, because EmojiPicker uses vanilla
-    const emojiButtonJQuery = $('#emoji-button');
     const textareaJQuery = $('div[contenteditable="true"]');
+
+    // The class for the bottom menus
     const menuButtons = $('.nav-link');
 
-    // the Cratz Pad - EmojiPicker settings
+    // The Cratz Pad - EmojiPicker settings
     const cratzPad = new EmojiPicker({
         // callback: () => TextareaEditor.reloadContent(textarea, picker.getText()),
         default_footer_message: 'Cratz Pad',
@@ -95,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
         ],
     });
+
     // calling listenON
     cratzPad.listenOn(emojiButton, container, textarea);
 
@@ -107,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==============================================================================
     // Editor: Click Handlers
     // ===============================================================================
-    // ======> Settings, all variables for the events below
+    // ======> Settings, all variables for the sections below, serves as the 'global' holders
     let openEmoji = false; // status if Emoji is allowed
     let disableShortcuts = false; // status if Hot-Keys are enabled or not
     let winSel = {}; // object that will contain all window.getSelection
@@ -115,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let rangeStart; // will hold the start of the selected range
     let rangeEnd; // will hold the end of the selected range
 
-    // ======> Listening for keydown events
+    // =======> Listening for keydown events
     document.addEventListener('keydown', (e) => {
         // 1. Determine which key was pressed
         const key = checkWhichKey(e);
