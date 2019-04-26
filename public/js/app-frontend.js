@@ -19,6 +19,7 @@ import EmojiPicker from 'rm-emoji-picker';
 import hotkeys from 'hotkeys-js';
 import is from '../../node_modules/is_js/is.min';
 import '../../node_modules/bootstrap/dist/js/bootstrap.bundle';
+import emojiCheck from '../../node_modules/emoji-aware';
 
 // Assets or Files
 import peopleLogo from '../img/neutral_decision.svg';
@@ -117,6 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ======> Settings, all variables for the sections below, serves as the 'global' holders
     let openEmoji = false; // status if Emoji is allowed
     let disableShortcuts = false; // status if Hot-Keys are enabled or not
+    let emojiSelected = false; // if a selected string includes emoji, cancel text process
     let winSel = {}; // object that will contain all window.getSelection
     let caretPosition; // for the cursor position
     let rangeStart; // will hold the start of the selected range
@@ -169,6 +171,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (is.firefox()) {
                 caretPosition = Caret.getCaretPos(textarea);
                 winSel = TextareaEditor.mozGetSelections(); // object of selections for mozilla
+
+                // Get the start and end ranges, so that we can mimic, only needed if chrome
+                const proRanger = TextareaEditor.proRanger(textareaEditor);
+                rangeStart = proRanger.start;
+                rangeEnd = proRanger.end;
             }
 
             // 2.2 Chrome works better if anchorNode is used
@@ -181,15 +188,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 rangeStart = proRanger.start;
                 rangeEnd = proRanger.end;
 
-                console.log(winSel.selectedTexts, rangeStart, rangeEnd);
+                console.log(winSel.textNodeVal);
             }
 
-            // 2.3 Enable main menu buttons, B I U etc... if some texts have been selected
-            // but if nothing is selected, and if there is one but not a text
-            if (winSel.selectedTextsLen < 1) {
-                TextareaEditor.disableMenuButtons(menuButtons);
-            } else {
+            // 2.3 Check if winSel.selectedTexts has an emoji
+            emojiCheck.onlyEmoji(winSel.selectedTexts).length > 0 ? emojiSelected = true : emojiSelected = false;
+
+            // 2.4 Enable main menu buttons, B I U etc...
+            // If it is a string and not empty and does not contain any emojis
+            if (winSel.selectedTextsLen > 0 && typeof winSel.selectedTexts === 'string' && !emojiSelected) {
                 TextareaEditor.enableMenuButtons(menuButtons);
+            } else {
+                TextareaEditor.disableMenuButtons(menuButtons);
             }
         }
 
@@ -232,49 +242,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // =========> When B button is clicked
     $('#edit-bold').on('click', (e) => {
-        // 1. double check if selectedTexts is !empty and !undefined
+        // 1. Double check if selectedTexts is !empty and !undefined
         if (winSel.selectedTexts === undefined || winSel.selectedTexts === '') {
             // if undefined or empty then exit
             e.preventDefault();
             e.stopPropagation();
 
-            return;
+            return; // exit
         }
 
-        // 2. Determine if chrome of firefox. Cause both browsers behave differently in handling the text selections
-        // 2.1 FIREFOX
-        if (is.firefox()) {
+        // 2. Determine these elements first if already contained inside <STRONG> or not
+        if (winSel.textNodeVal === 'strong') {
+            // 2.1 add a unique attribute to the <strong> tag
+            // winSel.addAttToParent.setAttribute('tag-selected', 'true');
 
-        }
+            // 2.2 then delete
+            // $('[tag-selected]').remove();
 
-        // 2.2 CHROME
-        if (is.chrome()) {
-            // determine these elements first if already contained inside <STRONG> or not
-            if (winSel.textNodeVal === 'strong') {
-                // add a unique attribute to the <strong> tag
-                winSel.addAttToParent.setAttribute('tag-selected', 'true');
+            // 2.3 set rangeEnd to be same with rangeStart, example: 3, 7 will become 3, 3
+            // rangeEnd = rangeStart;
 
-                // then delete
-                $('[tag-selected]').remove();
+            // 2.4 process it: insert the new one without the <strong> tags >> CHOSEN ROUTE FOR SIMPLICITY <<
+            TextareaEditor.textSelExec(textarea, rangeStart, rangeEnd, `${winSel.selectedTexts}`);
+        } else {
+            // 2.1 if selected is clean, no <STRONG> tags yet
+            const newStrong = `<strong>${winSel.selectedTexts}</strong>`;
 
-                // set rangeEnd to be same with rangeStart, example: 3, 7 will become 3, 3
-                rangeEnd = rangeStart;
-
-                // process it: insert the new one without the <strong> tags
-                TextareaEditor.textSelExec(textarea, rangeStart, rangeEnd, `${winSel.selectedTexts}`);
-            } else {
-                // if selected is clean, no <STRONG> tags yet
-                const newStrong = `<strong>${winSel.selectedTexts}</strong>`;
-
-                // process it: insert new with <strong> container
-                TextareaEditor.textSelExec(textarea, rangeStart, rangeEnd, newStrong);
-            }
+            // 2.1 process it: insert new with <strong> container
+            TextareaEditor.textSelExec(textarea, rangeStart, rangeEnd, newStrong);
         }
 
         // 3. Disable menu buttons
         TextareaEditor.disableMenuButtons(menuButtons);
     });
 
+    // ========> When I button is clicked
     $('#edit-italic').on('click', (e) => {
 
     });
