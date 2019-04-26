@@ -72,6 +72,19 @@ function disableMenuButtons(target) {
     }
 }
 
+function textSelExec(target, rangeStart, rangeEnd, textContent) {
+    // create a range
+    const range = rangeAtIndex(target, rangeStart, rangeEnd);
+
+    // set the range
+    const sel = document.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+
+    // replace the selected texts
+    document.execCommand('insertHTML', false, textContent);
+}
+
 // snippet by Xeoncross, but modified it a bit
 // https://jsfiddle.net/Xeoncross/4tUDk/
 function putContentAtCaret(content, rangeStart) {
@@ -115,7 +128,7 @@ function putContentAtCaret(content, rangeStart) {
 
 // snippet by TooTallNate,
 // https://github.com/webmodules/range-at-index
-function RangeAtIndex(el, index, offset, range) {
+function rangeAtIndex(el, index, offset, range) {
     const doc = el.ownerDocument;
 
     if (!range) {
@@ -253,14 +266,14 @@ function proRanger(editor) {
     // };
 }
 
+// Offical exports
 export {
-    reloadContent,
     nodeNormalizer,
     mozGetSelections,
     chromeGetSelections,
-    putContentAtCaret,
-    RangeAtIndex,
+    rangeAtIndex,
     enableMenuButtons,
     disableMenuButtons,
     proRanger,
+    textSelExec,
 };

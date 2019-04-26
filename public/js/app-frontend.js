@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const textareaJQuery = $('div[contenteditable="true"]');
 
     // The class for the bottom menus
-    const menuButtons = $('.nav-link');
+    const menuButtons = $('.bott-nav');
 
     // The Cratz Pad - EmojiPicker settings
     const cratzPad = new EmojiPicker({
@@ -102,13 +102,13 @@ document.addEventListener('DOMContentLoaded', () => {
         ],
     });
 
-    // calling listenON
+    // Calling listenON
     cratzPad.listenOn(emojiButton, container, textarea);
 
-    // => emoji button svg
+    // Emoji button svg
     emojiButtonJQuery.html(emojiButtonSVG);
 
-    // => Focus textarea on load, put cursor at the end
+    // Focus textarea on load, put cursor at the end
     Caret.putCursorAtEnd(textarea);
 
     // ==============================================================================
@@ -180,6 +180,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const proRanger = TextareaEditor.proRanger(textareaEditor);
                 rangeStart = proRanger.start;
                 rangeEnd = proRanger.end;
+
+                console.log(winSel.selectedTexts, rangeStart, rangeEnd);
             }
 
             // 2.3 Enable main menu buttons, B I U etc... if some texts have been selected
@@ -251,23 +253,21 @@ document.addEventListener('DOMContentLoaded', () => {
             if (winSel.textNodeVal === 'strong') {
                 // add a unique attribute to the <strong> tag
                 winSel.addAttToParent.setAttribute('tag-selected', 'true');
+
                 // then delete
                 $('[tag-selected]').remove();
-                // then insert the new one without the <strong> tags
-                TextareaEditor.putContentAtCaret(`${winSel.selectedTexts}`);
+
+                // set rangeEnd to be same with rangeStart, example: 3, 7 will become 3, 3
+                rangeEnd = rangeStart;
+
+                // process it: insert the new one without the <strong> tags
+                TextareaEditor.textSelExec(textarea, rangeStart, rangeEnd, `${winSel.selectedTexts}`);
             } else {
                 // if selected is clean, no <STRONG> tags yet
-                const newSpanStrong = `<strong>${winSel.selectedTexts}</strong>`;
-                // create a range
-                const range = TextareaEditor.RangeAtIndex(textarea, rangeStart, rangeEnd);
-                // set the range
-                const sel = document.getSelection();
-                sel.removeAllRanges();
-                sel.addRange(range);
-                // delete the selected texts
-                document.execCommand('delete', false, null);
-                // replace with a new one contained within <STRONG> tags
-                TextareaEditor.putContentAtCaret(newSpanStrong);
+                const newStrong = `<strong>${winSel.selectedTexts}</strong>`;
+
+                // process it: insert new with <strong> container
+                TextareaEditor.textSelExec(textarea, rangeStart, rangeEnd, newStrong);
             }
         }
 
