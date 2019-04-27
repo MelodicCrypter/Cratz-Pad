@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let rangeStart; // will hold the start of the selected range
     let rangeEnd; // will hold the end of the selected range
 
-    // =======> Listening for keydown events
+    // =======> Listening for keydown events to toggle something
     textarea.addEventListener('keydown', (e) => {
         // 1. Determine which key was pressed
         const key = checkWhichKey(e);
@@ -192,12 +192,13 @@ document.addEventListener('DOMContentLoaded', () => {
             document.execCommand('insertHTML', false, '&#009');
         }
 
-        // If ESC key was pressed, and HOT-KEYS are enabled
+        // 4. If ESC key was pressed, and HOT-KEYS are enabled
         // if (!disableShortcuts && key === 'Esc') {
         //     e.preventDefault();
         // }
 
-        // 5. Special treatment for Firefox when enter key is pressed inside contenteditable
+        // Special treatment for Firefox when enter key is pressed inside contenteditable
+        // NOTE: THIS IS DISCONTINUED
         if (is.firefox()) {
             if (key === 'Enter') {
                 e.preventDefault();
@@ -371,16 +372,46 @@ document.addEventListener('DOMContentLoaded', () => {
         TextareaEditor.disableMenuButtons(menuButtons);
     });
 
-    // ==========> Listen for any key combination shortcuts
-    // hotkeys('ctrl+a,cmd+a,command+a', (e, h) => {
-    //     e.preventDefault();
-    //     // if (window.getSelection) {
-    //     //     caretPosition = Caret.getCaretPos(textarea);
-    //     //     winSel = TextareaEditor.getSelections();
-    //     // }
-    //     alert('pressed cmd a');
-    // });
+    // ==============================================================================
+    // Key-Combination: Listening for keydown events for Menu Buttons
+    // ==============================================================================
+    textarea.addEventListener('keydown', (e) => {
+        // 1. Determine which key was pressed
+        const key = checkWhichKey(e);
 
+        // 5. If Command+B or Control+B are pressed
+        if (e.metaKey && key === 'b') {
+            e.preventDefault();
+            e.stopPropagation();
+
+            // 1. Double check if selectedTexts is !empty and !undefined
+            const tests = ['undefined', 'emptyString'];
+            if (TextareaEditor.validateSelStr(tests, winSel.selectedTexts, 'notAll')) {
+                // if undefined or empty then exit
+                e.preventDefault();
+                e.stopPropagation();
+
+                return; // exit
+            }
+
+            // 2. Setup the options for process B button
+            const options = {
+                rangeStart,
+                rangeEnd,
+                target: textarea,
+                content: winSel.selectedTexts,
+                tag: winSel.textNodeVal,
+                tagParent: winSel.textNodeParentVal,
+                tagGrandParent: winSel.textNodeGrandParentVal,
+                newTag: 'strong',
+            };
+            // 2.1 Start the process
+            TextareaEditor.textSelExec(options);
+
+            // 3. Disable menu buttons
+            TextareaEditor.disableMenuButtons(menuButtons);
+        }
+    });
 
     // ==============================================================================
     // Theme Buttons : this will allow user to set the app's theme
