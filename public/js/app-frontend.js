@@ -30,6 +30,9 @@ import placesLogo from '../img/binoculars.svg';
 import symbolsLogo from '../img/doughnut_chart.svg';
 import flagsLogo from '../img/globe.svg';
 import emojiButtonSVG from '../img/emoji-btn.svg';
+import favIcoPath from '../img/favicon.ico';
+import appLogoPath from '../img/cratz-pad-app-logo.png';
+import loaderImgPath from '../img/loader.gif';
 
 // Utility Modules
 import * as ButtonsEditor from '../../util/editor-buttons-utils';
@@ -39,10 +42,37 @@ import checkWhichKey from '../../util/keyboard-util';
 import toggler from '../../util/toggler-util';
 
 // ==============================================================================
+// =======> Basic Settings before the DOM loads
+// ==============================================================================
+// 1. Load .ico file
+const favicon = document.querySelector("link[rel='icon']");
+favicon.href = favIcoPath;
+// 2. Load app logo
+const logo = document.getElementById('appLogo');
+logo.src = appLogoPath;
+// 3. Load loader image
+const loaderImgTag = document.getElementById('loader-img');
+loaderImgTag.src = loaderImgPath;
+
+
+// ================================================================================
+// onLOAD: Hide loader and show the main container
+// =================================================================================
+$(window).on('load', () => {
+    setTimeout(() => {
+        $('#loader').hide();
+        $('#main-container').show();
+        $('#loader').detach();
+    }, 2000);
+});
+
+// ==================================================================================
 // DOM
-// ===============================================================================
+// ==================================================================================
 document.addEventListener('DOMContentLoaded', () => {
-    // =======> EmojiPicker
+    // ==============================================================================
+    // Set up: Settings for EmojiPicker and variables related to textarea
+    // ===============================================================================
     // Parent container of the div or textarea
     const container = document.getElementById('main-box');
 
@@ -186,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 rangeStart = proRanger.start;
                 rangeEnd = proRanger.end;
 
-                //console.log(winSel.textNodeGrandParentVal, winSel.textNodeParentVal, winSel.textNodeVal);
+                // console.log(winSel.textNodeGrandParentVal, winSel.textNodeParentVal, winSel.textNodeVal);
             }
 
             // 2.2 Chrome works better if anchorNode is used
@@ -356,4 +386,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==============================================================================
     // =====> ToolTip
     $('.nav-link').tooltip();
-});
+}, false);

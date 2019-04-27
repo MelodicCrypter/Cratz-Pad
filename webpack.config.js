@@ -57,11 +57,11 @@ const frontConfig = {
                 ],
             },
             {
-                test: /\.(ttf|woff|woff2|eot)(\?[\s\S]+)?$/,
+                test: /\.(ico|ttf|woff|woff2|eot)(\?[\s\S]+)?$/,
                 use: 'file-loader',
             },
             {
-                test: /\.(gif|png|jpe?g)$/i,
+                test: /\.(gif|png|jpe?g|ico)$/i,
                 use: [
                     'file-loader',
                 ],

@@ -2,10 +2,10 @@
 ${header}
 
 <body class="text-center">
-  <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+  <div style="display: none !important;" id="main-container" class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column hidden-on-load">
     <header class="masthead mb-auto fixed-top pt-3 pb-3">
       <div class="inner d-flex justify-content-between px-5">
-        <h1 class="masthead-brand">${title}</h1>
+        <h1 class="masthead-brand"><img id="appLogo" src=""></h1>
         <nav class="nav nav-masthead">
           <a class="nav-link disabled mode-text">Theme</a>
           <a id="day-theme" class="nav-link" data-toggle="tooltip" data-placement="bottom" title="Day"><i class="far fa-sun icons"></i></a>
@@ -62,6 +62,24 @@ ${header}
           </ul>
         </div>
       </nav>
+    </footer>
+  </div>
+
+  <div id="loader" class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column show-on-load">
+    <header class="masthead mb-auto fixed-top pt-3 pb-3">
+
+    </header>
+
+    <main id="loader-box" role="main" class="inner cover">
+      <section>
+        <div>
+          <span><img id="loader-img" src=""></span>
+        </div>
+      </section>
+    </main>
+
+    <footer class="mastfoot">
+
     </footer>
   </div>
 
