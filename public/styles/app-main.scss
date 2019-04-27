@@ -110,9 +110,9 @@ body {
 
 #loader {
   position: relative;
-  top: 300px !important;
+  top: 40vh !important;
   display: block !important;
-  z-index: 999999 !important;
+  z-index: 9999 !important;
 
   #loader-img {
     width: 100px;
@@ -175,6 +175,7 @@ header {
     width: 48px;
     position: relative;
     top: -4px;
+    left: -12px;
   }
 }
 #textarea {

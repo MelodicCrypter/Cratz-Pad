@@ -42,7 +42,7 @@ import checkWhichKey from '../../util/keyboard-util';
 import toggler from '../../util/toggler-util';
 
 // ==============================================================================
-// =======> Basic Settings before the DOM loads
+// Set up: Basic Settings before the DOM contents are loaded
 // ==============================================================================
 // 1. Load .ico file
 const favicon = document.querySelector("link[rel='icon']");
@@ -59,15 +59,27 @@ loaderImgTag.src = loaderImgPath;
 // onLOAD: Hide loader and show the main container
 // =================================================================================
 $(window).on('load', () => {
+    // 1. Show main after 2 seconds
     setTimeout(() => {
+        // 2. Hide now the loader
         $('#loader').hide();
-        $('#main-container').show();
-        $('#loader').detach();
+
+        // 3. Determine if not Chrome, cause this app was designed to work perfectly
+        // inside Chrome engine, if not Chrome, show the message
+        if (is.firefox() || is.safari() || is.edge() || is.opera() || is.ie()) {
+            $('#notChromeMsg').show();
+        }
+
+        // 3.1 If Chrome, show main
+        if (is.chrome()) {
+            $('#main-container').show();
+            $('#loader').detach(); // detach the loader element from the DOM
+        }
     }, 2000);
 });
 
 // ==================================================================================
-// DOM
+// DOM: This is the main core of the frontend
 // ==================================================================================
 document.addEventListener('DOMContentLoaded', () => {
     // ==============================================================================
@@ -163,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!disableShortcuts && key === 'Tab') {
             e.preventDefault();
 
-            // Detect if EmojiPicker is currently opened or close
+            // 2.1 Detect if EmojiPicker is currently opened or close
             if (!openEmoji) {
                 cratzPad.openPicker(e);
                 openEmoji = toggler(openEmoji, true, false);
@@ -207,6 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 2. If there is a selection
         if (window.getSelection) {
             // 2.1 Determine which browser. Firefox works better if focusNode is used
+            // NOTE: THIS IS DISCONTINUED. THIS APP WAS DESIGNED FOR CHROME ENGINE
             if (is.firefox()) {
                 caretPosition = Caret.getCaretPos(textarea);
                 winSel = TextareaEditor.mozGetSelections(); // object of selections for mozilla
@@ -215,8 +228,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const proRanger = TextareaEditor.proRanger(textareaEditor);
                 rangeStart = proRanger.start;
                 rangeEnd = proRanger.end;
-
-                // console.log(winSel.textNodeGrandParentVal, winSel.textNodeParentVal, winSel.textNodeVal);
             }
 
             // 2.2 Chrome works better if anchorNode is used
