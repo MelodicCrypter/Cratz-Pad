@@ -33,6 +33,8 @@ function mozGetSelections() {
         selectedTexts: winSel.toString(),
         selectedTextsLen: winSel.toString().length,
         textNodeVal: winSel.focusNode.parentElement.nodeName.toString().toLowerCase().trim(),
+        textNodeParentVal: winSel.focusNode.parentElement.parentElement.nodeName.toString().toLowerCase().trim(),
+        textNodeGrandParentVal: winSel.focusNode.parentElement.parentElement.parentElement.nodeName.toString().toLowerCase().trim(),
         addClassToParent: winSel.focusNode.parentElement.classList,
         addIdToParent: winSel.focusNode.parentElement,
         addAttToParent: winSel.focusNode.parentElement,
@@ -49,6 +51,8 @@ function chromeGetSelections() {
         selectedTextsLen: winSel.toString().length,
         parent: winSel.anchorNode.parentElement,
         textNodeVal: winSel.anchorNode.parentElement.nodeName.toString().toLowerCase().trim(),
+        textNodeParentVal: winSel.anchorNode.parentElement.parentElement.nodeName.toString().toLowerCase().trim(),
+        textNodeGrandParentVal: winSel.anchorNode.parentElement.parentElement.parentElement.nodeName.toString().toLowerCase().trim(),
         addClassToParent: winSel.anchorNode.parentElement.classList,
         addIdToParent: winSel.anchorNode.parentElement,
         addAttToParent: winSel.anchorNode.parentElement,
@@ -72,17 +76,206 @@ function disableMenuButtons(target) {
     }
 }
 
-function textSelExec(target, rangeStart, rangeEnd, textContent) {
+/**
+ * This will fire up when the user clicks the buttons: B, I, U
+ *
+ * @param o             this is the options object
+ * rangeStart,          the start of the range
+ * rangeEnd,            the end of the range
+ * target: textarea,    the dom element
+ * content: winSel.selectedTexts,   the selected texts
+ * tag: winSel.textNodeVal,         the firstChild tag, e.g <em> etc
+ * tagParent: winSel.textNodeParentVal,     the Parent tag
+ * tagGrandParent: winSel.textNodeGrandParentVal,   the Grand parent tag
+ * newTag: 'strong',    the new tag that you wish to apply
+ *
+ * basically, the pattern here would be always
+ * <strong><em><u> content </u></em></strong>
+ * it will never change. Even if strong was clicked last, it will still be
+ * formatted like that.
+ *
+ * So, <grandParent><parent><tag> content </tag></parent></grandParent>
+ */
+function textSelExec(o) {
+    let newContent;
+
     // create a range
-    const range = rangeAtIndex(target, rangeStart, rangeEnd);
+    const range = rangeAtIndex(o.target, o.rangeStart, o.rangeEnd);
 
     // set the range
     const sel = document.getSelection();
     sel.removeAllRanges();
     sel.addRange(range);
 
-    // replace the selected texts
-    document.execCommand('insertHTML', false, textContent);
+    if (o.tagGrandParent === 'strong' && o.tagParent === 'em' && o.tag === 'u') {
+        if (o.newTag === 'strong') {
+            newContent = `<em><u>${o.content}</u></em>`;
+        }
+
+        if (o.newTag === 'em') {
+            newContent = `<strong><u>${o.content}</u></strong>`;
+        }
+
+        if (o.newTag === 'u') {
+            newContent = `<strong><em>${o.content}</em></strong>`;
+        }
+
+        // replace the selected texts
+        document.execCommand('insertHTML', false, newContent);
+    } else if (o.tagGrandParent === 'div' && o.tagParent === 'em') {
+        if (o.tag === 'u' && o.newTag === 'strong') {
+            newContent = `<strong><em><u>${o.content}</u></em></strong>`;
+        }
+
+        if (o.tag === 'u' && o.newTag === 'u') {
+            newContent = `<em>${o.content}</em>`;
+        }
+
+        if (o.tagParent === o.newTag) {
+            newContent = `<${o.tag}>${o.content}</${o.tag}>`;
+        }
+
+        // replace the selected texts
+        document.execCommand('insertHTML', false, newContent);
+    } else if (o.tagGrandParent === 'div' && o.tagParent === 'strong') {
+        if (o.tag === 'u' && o.newTag === 'em') {
+            newContent = `<strong><em><u>${o.content}</u></em></strong>`;
+        }
+
+        if (o.tag === 'u' && o.newTag === 'u') {
+            newContent = `<strong>${o.content}</strong>`;
+        }
+
+        if (o.tag === 'em' && o.newTag === 'u') {
+            newContent = `<strong><em><u>${o.content}</u></em></strong>`;
+        }
+
+        if (o.tag === 'em' && o.newTag === 'em') {
+            newContent = `<strong>${o.content}</strong>`;
+        }
+
+        if (o.tag === 'u' && o.newTag === 'strong') {
+            newContent = `<u>${o.content}</u>`;
+        }
+
+        if (o.tag === 'em' && o.newTag === 'strong') {
+            newContent = `<em>${o.content}</em>`;
+        }
+
+        // replace the selected texts
+        document.execCommand('insertHTML', false, newContent);
+    } else if (o.tagGrandParent === 'main' && o.tagParent === 'div' && o.tag === 'u') {
+        if (o.newTag === 'strong') {
+            newContent = `<strong><u>${o.content}</u></strong>`;
+        }
+
+        if (o.newTag === 'em') {
+            newContent = `<em><u>${o.content}</u></em>`;
+        }
+
+        if (o.newTag === o.tag) {
+            newContent = `${o.content}`;
+        }
+
+        // replace the selected texts
+        document.execCommand('insertHTML', false, newContent);
+    } else if (o.tagGrandParent === 'main' && o.tagParent === 'div' && o.tag === 'em') {
+        if (o.newTag === 'strong') {
+            newContent = `<strong><em>${o.content}</em></strong>`;
+        }
+
+        if (o.newTag === 'u') {
+            newContent = `<em><u>${o.content}</u></em>`;
+        }
+
+        if (o.newTag === o.tag) {
+            newContent = `${o.content}`;
+        }
+
+        // replace the selected texts
+        document.execCommand('insertHTML', false, newContent);
+    } else if (o.tagGrandParent === 'main' && o.tagParent === 'div' && o.tag === 'strong') {
+        if (o.newTag === 'em') {
+            newContent = `<strong><em>${o.content}</em></strong>`;
+        }
+
+        if (o.newTag === 'u') {
+            newContent = `<strong><u>${o.content}</u></strong>`;
+        }
+
+        if (o.newTag === 'strong') {
+            newContent = `${o.content}`;
+        }
+
+        // replace the selected texts
+        document.execCommand('insertHTML', false, newContent);
+    } else if (o.tagGrandParent === 'div' && o.tagParent === 'main' && o.tag === 'div') {
+        // mostly the o.tag here is 'div', it means the text/s has no tags yet
+        // basing on the pattern mentioned above, it should be
+        // grandParent then parent then tag, so div would always be first tag
+        newContent = `<${o.newTag}>${o.content}</${o.newTag}>`;
+
+        // replace the selected texts with its corresponding tags
+        document.execCommand('insertHTML', false, newContent);
+        console.log('default');
+    }
+}
+
+function validateSelStr(tests, subject, passStat) {
+    const testsArr = [...tests];
+    const res = [];
+
+    // Run all tests
+    testsArr.forEach((test) => {
+        if (test === 'hasLength') {
+            subject.length > 0 ? res.push(true) : res.push(false);
+        }
+        if (test === 'isString') {
+            typeof subject === 'string' ? res.push(true) : res.push(false);
+        }
+        if (test === 'emptyString') {
+            subject === '' ? res.push(true) : res.push(false);
+        }
+        if (test === 'undefined') {
+            subject === undefined ? res.push(true) : res.push(false);
+        }
+    });
+
+    // Check if passStat is set to 'all', meaning all tests must pass
+    if (passStat === 'all' && res.length > 0) {
+        return res.every(r => r === true);
+    }
+
+    // Check if passTat is set to 'notAll', meaning only one or two tests should pass
+    if (passStat === 'notAll' && res.length > 0) {
+        return res.some(r => r === true);
+    }
+
+    // if res is empty just return false
+    return false;
+}
+
+function validateSelStrIfNot(tests, subject, passStat) {
+    const testsArr = [...tests];
+    const res = [];
+
+    // Run all tests
+    testsArr.forEach((test) => {
+        if (test === 'emptyString') {
+            subject !== '' ? res.push(true) : res.push(false);
+        }
+        if (test === 'undefined') {
+            subject !== 'string' ? res.push(true) : res.push(false);
+        }
+    });
+
+    // Check res if all are true, meaning all tests past
+    if (res.length > 0) {
+        return res.every(r => r === true);
+    }
+
+    // if res is empty just return false
+    return false;
 }
 
 // snippet by Xeoncross, but modified it a bit
@@ -276,4 +469,6 @@ export {
     disableMenuButtons,
     proRanger,
     textSelExec,
+    validateSelStr,
+    validateSelStrIfNot,
 };

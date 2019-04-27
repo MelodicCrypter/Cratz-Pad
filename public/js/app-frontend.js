@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let rangeEnd; // will hold the end of the selected range
 
     // =======> Listening for keydown events
-    document.addEventListener('keydown', (e) => {
+    textarea.addEventListener('keydown', (e) => {
         // 1. Determine which key was pressed
         const key = checkWhichKey(e);
 
@@ -154,6 +154,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // if (!disableShortcuts && key === 'Esc') {
         //     e.preventDefault();
         // }
+
+        // 5. Special treatment for Firefox when enter key is pressed inside contenteditable
+        if (is.firefox()) {
+            if (key === 'Enter') {
+                e.preventDefault();
+                document.execCommand('insertLineBreak');
+                // return false;
+            }
+        }
     }, false);
 
     // ========> Listen for any texts selection
@@ -176,6 +185,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const proRanger = TextareaEditor.proRanger(textareaEditor);
                 rangeStart = proRanger.start;
                 rangeEnd = proRanger.end;
+
+                //console.log(winSel.textNodeGrandParentVal, winSel.textNodeParentVal, winSel.textNodeVal);
             }
 
             // 2.2 Chrome works better if anchorNode is used
@@ -187,8 +198,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const proRanger = TextareaEditor.proRanger(textareaEditor);
                 rangeStart = proRanger.start;
                 rangeEnd = proRanger.end;
-
-                console.log(winSel.textNodeVal);
             }
 
             // 2.3 Check if winSel.selectedTexts has an emoji
@@ -196,7 +205,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 2.4 Enable main menu buttons, B I U etc...
             // If it is a string and not empty and does not contain any emojis
-            if (winSel.selectedTextsLen > 0 && typeof winSel.selectedTexts === 'string' && !emojiSelected) {
+            const tests = ['hasLength', 'isString'];
+            if (TextareaEditor.validateSelStr(tests, winSel.selectedTexts, 'all') && !emojiSelected) {
                 TextareaEditor.enableMenuButtons(menuButtons);
             } else {
                 TextareaEditor.disableMenuButtons(menuButtons);
@@ -215,20 +225,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // }
     });
 
-    // =======> Listen for any key combination shortcuts
-    // hotkeys('ctrl+a,cmd+a,command+a', (e, h) => {
-    //     e.preventDefault();
-    //     // if (window.getSelection) {
-    //     //     caretPosition = Caret.getCaretPos(textarea);
-    //     //     winSel = TextareaEditor.getSelections();
-    //     // }
-    //     alert('pressed cmd a');
-    // });
-
     // ===============================================================================
     // Button Menus : Click Events
     // ===============================================================================
-    // =======> When 'Disable Hot-Keys' is clicked
+    // =========> When 'Disable Hot-Keys' is clicked
     $('#btn-menu-disable').on('click', function (e) {
         e.preventDefault();
 
@@ -243,7 +243,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========> When B button is clicked
     $('#edit-bold').on('click', (e) => {
         // 1. Double check if selectedTexts is !empty and !undefined
-        if (winSel.selectedTexts === undefined || winSel.selectedTexts === '') {
+        const tests = ['undefined', 'emptyString'];
+        if (TextareaEditor.validateSelStr(tests, winSel.selectedTexts, 'notAll')) {
             // if undefined or empty then exit
             e.preventDefault();
             e.stopPropagation();
@@ -251,35 +252,94 @@ document.addEventListener('DOMContentLoaded', () => {
             return; // exit
         }
 
-        // 2. Determine these elements first if already contained inside <STRONG> or not
-        if (winSel.textNodeVal === 'strong') {
-            // 2.1 add a unique attribute to the <strong> tag
-            // winSel.addAttToParent.setAttribute('tag-selected', 'true');
-
-            // 2.2 then delete
-            // $('[tag-selected]').remove();
-
-            // 2.3 set rangeEnd to be same with rangeStart, example: 3, 7 will become 3, 3
-            // rangeEnd = rangeStart;
-
-            // 2.4 process it: insert the new one without the <strong> tags >> CHOSEN ROUTE FOR SIMPLICITY <<
-            TextareaEditor.textSelExec(textarea, rangeStart, rangeEnd, `${winSel.selectedTexts}`);
-        } else {
-            // 2.1 if selected is clean, no <STRONG> tags yet
-            const newStrong = `<strong>${winSel.selectedTexts}</strong>`;
-
-            // 2.1 process it: insert new with <strong> container
-            TextareaEditor.textSelExec(textarea, rangeStart, rangeEnd, newStrong);
-        }
+        // 2. Setup the options for process B button
+        const options = {
+            rangeStart,
+            rangeEnd,
+            target: textarea,
+            content: winSel.selectedTexts,
+            tag: winSel.textNodeVal,
+            tagParent: winSel.textNodeParentVal,
+            tagGrandParent: winSel.textNodeGrandParentVal,
+            newTag: 'strong',
+        };
+        // 2.1 Start the process
+        TextareaEditor.textSelExec(options);
 
         // 3. Disable menu buttons
         TextareaEditor.disableMenuButtons(menuButtons);
     });
 
-    // ========> When I button is clicked
+    // ==========> When I button is clicked
     $('#edit-italic').on('click', (e) => {
+        // 1. Double check if selectedTexts is !empty and !undefined
+        const tests = ['undefined', 'emptyString'];
+        if (TextareaEditor.validateSelStr(tests, winSel.selectedTexts, 'notAll')) {
+            // if undefined or empty then exit
+            e.preventDefault();
+            e.stopPropagation();
 
+            return; // exit
+        }
+
+        // 2. Setup the options for process B button
+        const options = {
+            rangeStart,
+            rangeEnd,
+            target: textarea,
+            content: winSel.selectedTexts,
+            tag: winSel.textNodeVal,
+            tagParent: winSel.textNodeParentVal,
+            tagGrandParent: winSel.textNodeGrandParentVal,
+            newTag: 'em',
+        };
+        // 2.1 Start the process
+        TextareaEditor.textSelExec(options);
+
+        // 3. Disable menu buttons
+        TextareaEditor.disableMenuButtons(menuButtons);
     });
+
+    // ==========> When U button is clicked
+    $('#edit-underline').on('click', (e) => {
+        // 1. Double check if selectedTexts is !empty and !undefined
+        const tests = ['undefined', 'emptyString'];
+        if (TextareaEditor.validateSelStr(tests, winSel.selectedTexts, 'notAll')) {
+            // if undefined or empty then exit
+            e.preventDefault();
+            e.stopPropagation();
+
+            return; // exit
+        }
+
+        // 2. Setup the options for process B button
+        const options = {
+            rangeStart,
+            rangeEnd,
+            target: textarea,
+            content: winSel.selectedTexts,
+            tag: winSel.textNodeVal,
+            tagParent: winSel.textNodeParentVal,
+            tagGrandParent: winSel.textNodeGrandParentVal,
+            newTag: 'u',
+        };
+        // 2.1 Start the process
+        TextareaEditor.textSelExec(options);
+
+        // 3. Disable menu buttons
+        TextareaEditor.disableMenuButtons(menuButtons);
+    });
+
+    // ==========> Listen for any key combination shortcuts
+    // hotkeys('ctrl+a,cmd+a,command+a', (e, h) => {
+    //     e.preventDefault();
+    //     // if (window.getSelection) {
+    //     //     caretPosition = Caret.getCaretPos(textarea);
+    //     //     winSel = TextareaEditor.getSelections();
+    //     // }
+    //     alert('pressed cmd a');
+    // });
+
 
     // ==============================================================================
     // Theme Buttons : this will allow user to set the app's theme

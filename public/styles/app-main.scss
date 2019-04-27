@@ -115,8 +115,8 @@ body {
   height: 82vh;
   max-height: 100vh;
   overflow: auto;
-  white-space: pre-line;
-  display: inline-block;
+  white-space: pre-wrap !important;
+  display: inline-block !important;
   text-align: left;
   font-weight: 100;
 
