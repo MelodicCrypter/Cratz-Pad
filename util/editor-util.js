@@ -217,7 +217,6 @@ function textSelExec(o) {
 
         // replace the selected texts with its corresponding tags
         document.execCommand('insertHTML', false, newContent);
-        console.log('default');
     }
 }
 
@@ -246,7 +245,7 @@ function validateSelStr(tests, subject, passStat) {
         return res.every(r => r === true);
     }
 
-    // Check if passTat is set to 'notAll', meaning only one or two tests should pass
+    // Check if passStat is set to 'notAll', meaning only one or several tests should pass
     if (passStat === 'notAll' && res.length > 0) {
         return res.some(r => r === true);
     }
@@ -276,6 +275,30 @@ function validateSelStrIfNot(tests, subject, passStat) {
 
     // if res is empty just return false
     return false;
+}
+
+function modalShow(targetModal, targetParent, modalBody, modified, textMsg) {
+    if (modified) {
+        targetParent.addClass('modal-lg');
+        modalBody.addClass('modal-modified');
+        modalBody.html(textMsg);
+        targetModal.modal('show');
+    } else {
+        targetParent.removeClass('modal-lg');
+        modalBody.removeClass('modal-modified');
+        modalBody.text(textMsg);
+        targetModal.modal('show');
+    }
+}
+
+function downloader(filename, data) {
+    const target = document.createElement('a');
+    target.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(data)}`);
+    target.setAttribute('download', filename);
+    target.style.display = 'none';
+    document.body.appendChild(target);
+    target.click();
+    document.body.removeChild(target);
 }
 
 // snippet by Xeoncross, but modified it a bit
@@ -470,5 +493,7 @@ export {
     proRanger,
     textSelExec,
     validateSelStr,
+    modalShow,
+    downloader,
     validateSelStrIfNot,
 };

@@ -297,3 +297,27 @@ header {
     background: linear-gradient(90deg, rgba(130, 127, 169, 0.8729692560617998) 0%, rgba(187, 169, 86, 0.78) 35%, rgb(64, 165, 243) 100%);
   }
 }
+
+.modal {
+  #appLogoModal {
+    width: 32px;
+  }
+  .modal-header {
+    border-bottom: 0px !important;
+    background: linear-gradient(90deg, rgba(197, 188, 143, 0.4948179955575981) 16%, rgba(15, 91, 119, 0.75) 100%);
+  }
+  .modal-body {
+    border: 0 !important;
+    color: #686a6b !important;
+    text-shadow: none !important;
+    font-weight: 300 !important;
+  }
+
+  .modal-body.modal-modified {
+    text-align: left !important;
+
+    a {
+      color: #686a6b !important;
+    }
+  }
+}

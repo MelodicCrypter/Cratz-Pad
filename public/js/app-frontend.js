@@ -16,10 +16,10 @@ import '../styles/app-main.scss';
 // Library Modules
 import $ from 'jquery';
 import EmojiPicker from 'rm-emoji-picker';
-import hotkeys from 'hotkeys-js';
+import { saveAs } from 'file-saver';
+import emojiCheck from '../../node_modules/emoji-aware';
 import is from '../../node_modules/is_js/is.min';
 import '../../node_modules/bootstrap/dist/js/bootstrap.bundle';
-import emojiCheck from '../../node_modules/emoji-aware';
 
 // Assets or Files
 import peopleLogo from '../img/neutral_decision.svg';
@@ -34,7 +34,7 @@ import favIcoPath from '../img/favicon.ico';
 import appLogoPath from '../img/cratz-pad-app-logo.png';
 import loaderImgPath from '../img/loader.gif';
 
-// Utility Modules
+// Own Utility Modules
 import * as ButtonsEditor from '../../util/editor-buttons-utils';
 import * as TextareaEditor from '../../util/editor-util';
 import * as Caret from '../../util/caret-utils';
@@ -50,10 +50,12 @@ favicon.href = favIcoPath;
 // 2. Load app logo
 const logo = document.getElementById('appLogo');
 logo.src = appLogoPath;
-// 3. Load loader image
+// 3. Load app logo for alert modals
+const logoImgAlertBox = document.getElementById('appLogoModal');
+logoImgAlertBox.src = appLogoPath;
+// 4. Load loader image
 const loaderImgTag = document.getElementById('loader-img');
 loaderImgTag.src = loaderImgPath;
-
 
 // ================================================================================
 // onLOAD: Hide loader and show the main container
@@ -68,12 +70,14 @@ $(window).on('load', () => {
         // inside Chrome engine, if not Chrome, show the message
         if (is.firefox() || is.safari() || is.edge() || is.opera() || is.ie()) {
             $('#notChromeMsg').show();
+            $('#main-container').remove();
         }
 
         // 3.1 If Chrome, show main
         if (is.chrome()) {
             $('#main-container').show();
             $('#loader').detach(); // detach the loader element from the DOM
+            Caret.putCursorAtEnd(document.getElementById('textarea')); // focus on the contenteditable
         }
     }, 2000);
 });
@@ -85,24 +89,29 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==============================================================================
     // Set up: Settings for EmojiPicker and variables related to textarea
     // ===============================================================================
-    // Parent container of the div or textarea
+    // ::::Parent container of the div or textarea
     const container = document.getElementById('main-box');
 
     // Button for the emojis: jQuery and vanilla
     const emojiButton = document.getElementById('emoji-button');
     const emojiButtonJQuery = $('#emoji-button');
 
-    // The 'textarea' which in this case is a contenteditable: both jQuery and vanilla
+    // ::::The 'textarea' which in this case is a contenteditable: both jQuery and vanilla
     const textarea = document.getElementById('textarea');
     const textareaEditor = document.getElementsByClassName('editor');
     const textareaJQuery = $('div[contenteditable="true"]');
 
-    // The class for the bottom menus
+    // ::::The class for the bottom menus
     const menuButtons = $('.bott-nav');
 
-    // The Cratz Pad - EmojiPicker settings
+    // ::::The modals
+    const modalTarget = $('#modalAlert');
+    const modalBody = $('.modal .modal-body');
+    const modalDialog = $('.modal-dialog');
+
+    // ::::The Cratz Pad - EmojiPicker settings
     const cratzPad = new EmojiPicker({
-        // callback: () => TextareaEditor.reloadContent(textarea, picker.getText()),
+        // ::::callback: () => TextareaEditor.reloadContent(textarea, picker.getText()),
         default_footer_message: 'Cratz Pad',
         show_colon_preview: false,
         positioning: 'vertical',
@@ -145,14 +154,11 @@ document.addEventListener('DOMContentLoaded', () => {
         ],
     });
 
-    // Calling listenON
+    // ::::Calling listenON
     cratzPad.listenOn(emojiButton, container, textarea);
 
-    // Emoji button svg
+    // ::::Emoji button svg
     emojiButtonJQuery.html(emojiButtonSVG);
-
-    // Focus textarea on load, put cursor at the end
-    Caret.putCursorAtEnd(textarea);
 
     // ==============================================================================
     // Editor: Click Handlers
@@ -166,51 +172,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let rangeStart; // will hold the start of the selected range
     let rangeEnd; // will hold the end of the selected range
 
-    // =======> Listening for keydown events to toggle something
-    textarea.addEventListener('keydown', (e) => {
-        // 1. Determine which key was pressed
-        const key = checkWhichKey(e);
-
-        // 2. If TAB key was pressed, and HOT-KEYS are enabled
-        if (!disableShortcuts && key === 'Tab') {
-            e.preventDefault();
-
-            // 2.1 Detect if EmojiPicker is currently opened or close
-            if (!openEmoji) {
-                cratzPad.openPicker(e);
-                openEmoji = toggler(openEmoji, true, false);
-            } else {
-                setTimeout(() => $('#emoji-picker').detach(), 100);
-                openEmoji = toggler(openEmoji, true, false);
-            }
-        }
-
-        // 3. If shortcuts are disabled, but TAB was pressed
-        if (disableShortcuts && key === 'Tab') {
-            e.preventDefault();
-            // Insert a normal tab space character
-            document.execCommand('insertHTML', false, '&#009');
-        }
-
-        // 4. If ESC key was pressed, and HOT-KEYS are enabled
-        // if (!disableShortcuts && key === 'Esc') {
-        //     e.preventDefault();
-        // }
-
-        // Special treatment for Firefox when enter key is pressed inside contenteditable
-        // NOTE: THIS IS DISCONTINUED
-        if (is.firefox()) {
-            if (key === 'Enter') {
-                e.preventDefault();
-                document.execCommand('insertLineBreak');
-                // return false;
-            }
-        }
-    }, false);
-
     // ========> Listen for any texts selection
     // This event is very vital cause in this section, selectedTexts, caretPosition, and textState will be set
-    textareaJQuery.bind('mouseup keydown mousedown touchend', (e) => {
+    textareaJQuery.bind('mouseup keyup mousedown touchend', (e) => {
         // 1. Disable double click for selecting texts
         if (e.detail > 1) {
             e.preventDefault();
@@ -245,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // 2.3 Check if winSel.selectedTexts has an emoji
             emojiCheck.onlyEmoji(winSel.selectedTexts).length > 0 ? emojiSelected = true : emojiSelected = false;
 
-            // 2.4 Enable main menu buttons, B I U etc...
+            // 2.4 Enable main menu buttons, B I U etc...,
             // If it is a string and not empty and does not contain any emojis
             const tests = ['hasLength', 'isString'];
             if (TextareaEditor.validateSelStr(tests, winSel.selectedTexts, 'all') && !emojiSelected) {
@@ -254,17 +218,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 TextareaEditor.disableMenuButtons(menuButtons);
             }
         }
-
-        // 3. If Shift key was used in selecting texts
-        // if (e.shiftKey) {
-        //     if (window.getSelection) {
-        //         selectedTexts = window.getSelection().toString();
-        //         caretPosition = window.getSelection().getRangeAt(0);
-        //     } else if (document.selection) {
-        //         selectedTexts = document.selection.createRange();
-        //         caretPosition = textarea.selectionEnd;
-        //     }
-        // }
     });
 
     // ===============================================================================
@@ -282,69 +235,86 @@ document.addEventListener('DOMContentLoaded', () => {
         Caret.setCaretPos(textarea, (caretPosition));
     });
 
-    // =========> When B button is clicked
-    $('#edit-bold').on('click', (e) => {
-        // 1. Double check if selectedTexts is !empty and !undefined
-        const tests = ['undefined', 'emptyString'];
-        if (TextareaEditor.validateSelStr(tests, winSel.selectedTexts, 'notAll')) {
-            // if undefined or empty then exit
-            e.preventDefault();
-            e.stopPropagation();
+    // =========> When 'Auto Copy All' is clicked
+    $('#auto-copy-all').on('click', (e) => {
+        e.preventDefault();
 
-            return; // exit
+        // 1. Set focus on the conteneditable 'textarea'
+        textareaJQuery.focus();
+
+        // 2. Select all and assign the selection to variable
+        document.execCommand('selectAll', false, null);
+        const tempSelectedTexts = window.getSelection().toString();
+
+        // 3. Check first if the contenteditable area is not empty
+        const tests = ['isString', 'hasLength'];
+        if (TextareaEditor.validateSelStr(tests, tempSelectedTexts, 'all')) {
+            // 3.1 if all passes, copy
+            document.execCommand('copy', false, null);
+
+            // 3.2 Remove all ranges
+            window.getSelection().removeAllRanges();
+
+            // 3.3. Show modal alert telling that all texts were copied
+            TextareaEditor.modalShow(modalTarget, modalBody, '😊 Everything was copied. Paste the data somewhere.');
+        } else {
+            // 3.1 If fails, show modal alert
+            TextareaEditor.modalShow(modalTarget, modalBody, 'The area is empty. Please double check. 😊');
         }
-
-        // 2. Setup the options for process B button
-        const options = {
-            rangeStart,
-            rangeEnd,
-            target: textarea,
-            content: winSel.selectedTexts,
-            tag: winSel.textNodeVal,
-            tagParent: winSel.textNodeParentVal,
-            tagGrandParent: winSel.textNodeGrandParentVal,
-            newTag: 'strong',
-        };
-        // 2.1 Start the process
-        TextareaEditor.textSelExec(options);
-
-        // 3. Disable menu buttons
-        TextareaEditor.disableMenuButtons(menuButtons);
     });
 
-    // ==========> When I button is clicked
-    $('#edit-italic').on('click', (e) => {
-        // 1. Double check if selectedTexts is !empty and !undefined
-        const tests = ['undefined', 'emptyString'];
-        if (TextareaEditor.validateSelStr(tests, winSel.selectedTexts, 'notAll')) {
-            // if undefined or empty then exit
-            e.preventDefault();
-            e.stopPropagation();
+    // =========> When 'Download Button' is clicked
+    $('#download-btn').on('click', (e) => {
+        e.preventDefault();
 
-            return; // exit
-        }
+        // 1. Set focus on the conteneditable 'textarea'
+        textareaJQuery.focus();
 
-        // 2. Setup the options for process B button
-        const options = {
-            rangeStart,
-            rangeEnd,
-            target: textarea,
-            content: winSel.selectedTexts,
-            tag: winSel.textNodeVal,
-            tagParent: winSel.textNodeParentVal,
-            tagGrandParent: winSel.textNodeGrandParentVal,
-            newTag: 'em',
-        };
-        // 2.1 Start the process
-        TextareaEditor.textSelExec(options);
+        // 2. Select all inside the textarea
+        document.execCommand('selectAll', false, null);
 
-        // 3. Disable menu buttons
-        TextareaEditor.disableMenuButtons(menuButtons);
+        // 3. Get the selection
+        const datatext = window.getSelection().toString();
+
+        // 4. Create a new Blob
+        const blob = new Blob([datatext], { type: 'text/plain;charset=utf-8' });
+
+        // 5. Create file name and a random number for the filename
+        const randomNum = Math.floor(Math.random() * 90000) + 10000;
+        const filename = `Cratz-Pad-${randomNum}.txt`;
+
+        // 6. Save the file using file-save js
+        saveAs(blob, filename);
+
+        // 7. Remove all ranges
+        window.getSelection().removeAllRanges();
     });
 
-    // ==========> When U button is clicked
-    $('#edit-underline').on('click', (e) => {
-        // 1. Double check if selectedTexts is !empty and !undefined
+    // =========> When 'About' is clicked
+    $('#about-app').on('click', (e) => {
+        e.preventDefault();
+
+        TextareaEditor.modalShow(modalTarget, modalDialog, modalBody, true, ''
+            + '<strong>Name:</strong> Cratz Pad'
+            + '<br><br>'
+            + '<strong>Version:</strong> 1.0.0'
+            + '<br><br>'
+            + '<strong>About:</strong> <br>Cratz Pad is a really plain and simple app where users can type all they want.'
+            + ' Users can also download the file they are creating as plain text. You do not need to'
+            + ' create an account. So, if you do not want to download your file you can simply copy it'
+            + 'and paste it directly to your editor.'
+            + '<br><br>'
+            + '<strong>Developer:</strong> Melodic Crypter'
+            + '<br><br>'
+            + '<strong>Website:</strong> <a href="https://www.melodiccrypter.com" target="_blank">Melodic Crypter Official</a>'
+            + '<br><br>'
+            + '<strong>GitHub:</strong> <a href="https://www.github.com/MelodicCrypter" target="_blank">GitHub Account</a>');
+    });
+
+    // =========> When B or I or U buttons are clicked
+    $('#edit-bold, #edit-italic, #edit-underline').on('click', function (e) {
+        // 1. Double check everything, if only texts were selected
+        // no need to worry if it contains emojis cause it has been taken care of above
         const tests = ['undefined', 'emptyString'];
         if (TextareaEditor.validateSelStr(tests, winSel.selectedTexts, 'notAll')) {
             // if undefined or empty then exit
@@ -354,7 +324,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return; // exit
         }
 
-        // 2. Setup the options for process B button
+        // 2. Assign the tag whether 'strong', 'em', or 'u'
+        const uniqueTag = $(this).attr('data-unique-tag');
+
+        // 3. Setup the options for process B button
         const options = {
             rangeStart,
             rangeEnd,
@@ -363,55 +336,101 @@ document.addEventListener('DOMContentLoaded', () => {
             tag: winSel.textNodeVal,
             tagParent: winSel.textNodeParentVal,
             tagGrandParent: winSel.textNodeGrandParentVal,
-            newTag: 'u',
+            newTag: uniqueTag,
         };
-        // 2.1 Start the process
+        // 3.1 Start the process
         TextareaEditor.textSelExec(options);
 
-        // 3. Disable menu buttons
+        // 4. Disable menu buttons
         TextareaEditor.disableMenuButtons(menuButtons);
     });
 
     // ==============================================================================
-    // Key-Combination: Listening for keydown events for Menu Buttons
+    // Listening for keydown events for Menu Buttons
     // ==============================================================================
     textarea.addEventListener('keydown', (e) => {
         // 1. Determine which key was pressed
         const key = checkWhichKey(e);
 
-        // 5. If Command+B or Control+B are pressed
-        if (e.metaKey && key === 'b') {
+        // 2. Set a uniqueKey first
+        let uniqueTag;
+
+        // 3.1. If Cmd+B or Ctrl+b, Cmd+I or Ctrl+I, Cmd+U or Ctrl+U
+        if ((e.metaKey && key === 'b')
+            || (e.metaKey && key === 'i')
+            || (e.metaKey && key === 'u')
+            || (e.ctrlKey && key === 'b')
+            || (e.ctrlKey && key === 'i')
+            || (e.ctrlKey && key === 'u')) {
+            // 3.1.2 prevent all defaults
             e.preventDefault();
             e.stopPropagation();
 
-            // 1. Double check if selectedTexts is !empty and !undefined
-            const tests = ['undefined', 'emptyString'];
-            if (TextareaEditor.validateSelStr(tests, winSel.selectedTexts, 'notAll')) {
-                // if undefined or empty then exit
-                e.preventDefault();
-                e.stopPropagation();
+            // 3.1.3 Determine what tag to put
+            key === 'b' ? uniqueTag = 'strong' : '';
+            key === 'i' ? uniqueTag = 'em' : '';
+            key === 'u' ? uniqueTag = 'u' : '';
 
-                return; // exit
+            // 3.1.4 This is needed cause if selected texts contains an emoji and one of menu button is clicked
+            // this will show a modal telling user why emoji can't be styled
+            emojiCheck.onlyEmoji(winSel.selectedTexts).length > 0 ? emojiSelected = true : emojiSelected = false;
+
+            // 3.1.5 if no emoji is included then proceed with the process
+            if (!emojiSelected) {
+                // 3.1.6 Setup the options for process B button
+                const options = {
+                    rangeStart,
+                    rangeEnd,
+                    target: textarea,
+                    content: winSel.selectedTexts,
+                    tag: winSel.textNodeVal,
+                    tagParent: winSel.textNodeParentVal,
+                    tagGrandParent: winSel.textNodeGrandParentVal,
+                    newTag: uniqueTag,
+                };
+
+                // 3.1.7 Start the process
+                TextareaEditor.textSelExec(options);
+
+                // 3.1.8 Disable menu buttons
+                TextareaEditor.disableMenuButtons(menuButtons);
+            } else {
+                // 3.1.6 If selected texts contains some emjois then show modal alert
+                TextareaEditor.modalShow(modalTarget, modalBody, "😔 Emojis doesn't look great when styled. Text only please.");
             }
-
-            // 2. Setup the options for process B button
-            const options = {
-                rangeStart,
-                rangeEnd,
-                target: textarea,
-                content: winSel.selectedTexts,
-                tag: winSel.textNodeVal,
-                tagParent: winSel.textNodeParentVal,
-                tagGrandParent: winSel.textNodeGrandParentVal,
-                newTag: 'strong',
-            };
-            // 2.1 Start the process
-            TextareaEditor.textSelExec(options);
-
-            // 3. Disable menu buttons
-            TextareaEditor.disableMenuButtons(menuButtons);
         }
-    });
+
+        // 4. If TAB key was pressed, and HOT-KEYS are enabled
+        if (!disableShortcuts && key === 'Tab') {
+            e.preventDefault();
+
+            // 4.1 Detect if EmojiPicker is currently opened or close
+            if (!openEmoji) {
+                cratzPad.openPicker(e);
+                openEmoji = toggler(openEmoji, true, false);
+            } else {
+                setTimeout(() => $('#emoji-picker').detach(), 100);
+                openEmoji = toggler(openEmoji, true, false);
+            }
+        }
+
+        // 5. If shortcuts are disabled, but TAB was pressed
+        if (disableShortcuts && key === 'Tab') {
+            e.preventDefault();
+            // Insert a normal tab space character
+            document.execCommand('insertHTML', false, '&#009');
+        }
+
+        if (is.firefox()) {
+            if (key === 'Enter') {
+                e.preventDefault();
+                document.execCommand('insertLineBreak');
+                // return false;
+            }
+        }
+    }, false);
+
+    // EVENT LISTENER FOR CLOSING THE WINDOW or Tab ============== HERE!
 
     // ==============================================================================
     // Theme Buttons : this will allow user to set the app's theme
