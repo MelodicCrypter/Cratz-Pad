@@ -24,13 +24,13 @@ ${header}
         <div id="navbarCollapse" class="d-lg-flex d-block flex-row mx-auto mx-0">
           <ul class="navbar-nav">
             <li class="nav-item px-1">
-              <a id="edit-bold" class="nav-link bott-nav disabled" data-toggle="tooltip" data-placement="top" title="Bold"><i class="fas fa-bold icons"></i></a>
+              <a id="edit-bold" class="nav-link bott-nav disabled" data-toggle="tooltip" data-placement="top" title="Bold" data-unique-tag='strong'><i class="fas fa-bold icons"></i></a>
             </li>
             <li class="nav-item px-1">
-              <a id="edit-italic" class="nav-link bott-nav disabled" data-toggle="tooltip" data-placement="top" title="Italic" ><i class="fas fa-italic icons"></i></a>
+              <a id="edit-italic" class="nav-link bott-nav disabled" data-toggle="tooltip" data-placement="top" title="Italic" data-unique-tag='em'><i class="fas fa-italic icons"></i></a>
             </li>
             <li class="nav-item px-1">
-              <a id="edit-underline" class="nav-link bott-nav disabled" data-toggle="tooltip" data-placement="top" title="Underline" ><i class="fas fa-underline icons"></i></a>
+              <a id="edit-underline" class="nav-link bott-nav disabled" data-toggle="tooltip" data-placement="top" title="Underline" data-unique-tag='u'><i class="fas fa-underline icons"></i></a>
             </li>
             <li class="nav-item disabled px-1">
               <a class="nav-link disabled"><i class="fas fa-ellipsis-v icons divider"></i></a>
@@ -48,21 +48,38 @@ ${header}
               <a class="nav-link disabled"><i class="fas fa-ellipsis-v icons divider"></i></a>
             </li>
             <li class="nav-item px-1">
-              <a class="nav-link" data-toggle="tooltip" data-placement="top" title="Disable Tab Hot-Key"><i id="btn-menu-disable" class="fas fa-hand-paper icons"></i></a>
+              <a class="nav-link" data-toggle="tooltip" data-placement="top" title="Disable Hot-Keys"><i id="btn-menu-disable" class="fas fa-hand-paper icons"></i></a>
             </li>
             <li class="nav-item px-1">
-              <a class="nav-link" data-toggle="tooltip" data-placement="top" title="Copy"><i class="far fa-copy icons"></i></a>
+              <a id="auto-copy-all" class="nav-link" data-toggle="tooltip" data-placement="top" title="Auto Copy All"><i class="far fa-copy icons"></i></a>
             </li>
             <li class="nav-item px-1">
-              <a class="nav-link" data-toggle="tooltip" data-placement="top" title="Download"><i class="fas fa-file-download icons"></i></a>
+              <a id="download-btn" class="nav-link" data-toggle="tooltip" data-placement="top" title="Download" download=""><i class="fas fa-file-download icons"></i></a>
             </li>
             <li class="nav-item px-1">
-              <a class="nav-link" data-toggle="tooltip" data-placement="top" title="About"><i class="fas fa-question-circle icons"></i></a>
+              <a id="about-app" class="nav-link" data-toggle="tooltip" data-placement="top" title="About"><i class="fas fa-question-circle icons"></i></a>
             </li>
           </ul>
         </div>
       </nav>
     </footer>
+  </div>
+
+  <div style="display: none;" class="modal fade" id="modalAlert" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle"><img id="appLogoModal" src=""></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <br>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div id="loader" class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column show-on-load">
