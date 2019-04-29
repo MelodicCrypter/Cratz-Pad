@@ -18,7 +18,7 @@ function toggleHotKeys(target) {
             .addClass('fa-thumbs-up') // Add new class for enabling again HOT-KEYS
             .parent() // go to parent element, this case, the anchor tag, change attributes
             .attr({
-                'data-original-title': 'Enable Hot-Key',
+                'data-original-title': 'Enable Hot-Keys',
             })
             .tooltip('show'); // this will regenerate bootstrap attribute for data-original-title
     } else {
@@ -31,7 +31,7 @@ function toggleHotKeys(target) {
             .addClass('fa-hand-paper')
             .parent()
             .attr({
-                'data-original-title': 'Disable Hot-Key',
+                'data-original-title': 'Disable Hot-Keys',
             })
             .tooltip('show');
     }
