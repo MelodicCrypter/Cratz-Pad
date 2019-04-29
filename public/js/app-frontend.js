@@ -430,7 +430,46 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, false);
 
-    // EVENT LISTENER FOR CLOSING THE WINDOW or Tab ============== HERE!
+    // ==============================================================================
+    // Listening for keydown events for Menu Buttons Left Center Right Justify
+    // ==============================================================================
+    $('#edit-left, #edit-center, #edit-right, #edit-justify').on('click', function (e) {
+        e.preventDefault();
+
+        // 1. Assign the tag whether 'strong', 'em', or 'u'
+        const uniqueTag = $(this).attr('data-unique-tag');
+
+        if (uniqueTag === 'left') {
+            textareaJQuery
+                .removeClass('align-all-center align-all-right align-all-justify')
+                .addClass('align-all-left');
+        }
+
+        if (uniqueTag === 'center') {
+            textareaJQuery
+                .removeClass('align-all-left align-all-right align-all-justify')
+                .addClass('align-all-center');
+        }
+
+        if (uniqueTag === 'right') {
+            textareaJQuery
+                .removeClass('align-all-center align-all-left align-all-justify')
+                .addClass('align-all-right');
+        }
+
+        if (uniqueTag === 'justify') {
+            textareaJQuery
+                .removeClass('align-all-center align-all-right align-all-left')
+                .addClass('align-all-justify');
+        }
+    });
+
+    // Todo
+    // create shortcut for text-aligns
+    // fix enable/disable hot-keys
+    // themes
+    // EVENT LISTENER FOR CLOSING THE WINDOW or Tab ==============
+    // refactor if have time
 
     // ==============================================================================
     // Theme Buttons : this will allow user to set the app's theme

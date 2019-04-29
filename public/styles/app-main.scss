@@ -134,10 +134,40 @@ body {
   display: inline-block !important;
   text-align: left;
   font-weight: 100;
+  cursor: text;
 
   &:focus {
     border: none !important;
     outline: 0px solid transparent;
+  }
+
+  &.align-all-left {
+    text-align: left !important;
+  }
+  &.align-all-center {
+    text-align: center !important;
+  }
+  &.align-all-right {
+    text-align: right !important;
+  }
+  &.align-all-justify {
+    text-align: justify !important;
+  }
+
+  &::-webkit-input-placeholder {
+    color: rgba(187, 187, 187, 0.48) !important;
+  }
+  &:-moz-placeholder {
+    color: rgba(187, 187, 187, 0.48) !important;
+  }
+  &::-moz-placeholder {
+    color: rgba(187, 187, 187, 0.48) !important;
+  }
+  &:-ms-input-placeholder {
+    color: rgba(187, 187, 187, 0.48) !important;
+  }
+  &::placeholder {
+    color: rgba(187, 187, 187, 0.48) !important;
   }
 }
 .bold {
@@ -178,23 +208,7 @@ header {
     left: -12px;
   }
 }
-#textarea {
-  &::-webkit-input-placeholder {
-    color: rgba(187, 187, 187, 0.48) !important;
-  }
-  &:-moz-placeholder {
-    color: rgba(187, 187, 187, 0.48) !important;
-  }
-  &::-moz-placeholder {
-    color: rgba(187, 187, 187, 0.48) !important;
-  }
-  &:-ms-input-placeholder {
-    color: rgba(187, 187, 187, 0.48) !important;
-  }
-  &::placeholder {
-    color: rgba(187, 187, 187, 0.48) !important;
-  }
-}
+
 .mode-text {
   color: #655454 !important;
 }
