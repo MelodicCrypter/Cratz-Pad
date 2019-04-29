@@ -277,18 +277,21 @@ function validateSelStrIfNot(tests, subject, passStat) {
     return false;
 }
 
-function modalShow(targetModal, targetParent, modalBody, modified, textMsg) {
-    if (modified) {
-        targetParent.addClass('modal-lg');
-        modalBody.addClass('modal-modified');
-        modalBody.html(textMsg);
-        targetModal.modal('show');
-    } else {
+function modalShowMod(targetModal, targetParent, modalBody, textMsg) {
+    targetParent.addClass('modal-lg');
+    modalBody.addClass('modal-modified');
+    modalBody.html(textMsg);
+    targetModal.modal('show');
+
+    targetModal.on('hidden.bs.modal', (e) => {
         targetParent.removeClass('modal-lg');
         modalBody.removeClass('modal-modified');
-        modalBody.text(textMsg);
-        targetModal.modal('show');
-    }
+    });
+}
+
+function modalShow(targetModal, modalBody, textMsg) {
+    modalBody.text(textMsg);
+    targetModal.modal('show');
 }
 
 function downloader(filename, data) {
@@ -494,6 +497,7 @@ export {
     textSelExec,
     validateSelStr,
     modalShow,
+    modalShowMod,
     downloader,
     validateSelStrIfNot,
 };

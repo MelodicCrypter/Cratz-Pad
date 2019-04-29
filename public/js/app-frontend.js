@@ -294,7 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#about-app').on('click', (e) => {
         e.preventDefault();
 
-        TextareaEditor.modalShow(modalTarget, modalDialog, modalBody, true, ''
+        TextareaEditor.modalShowMod(modalTarget, modalDialog, modalBody, ''
             + '<strong>Name:</strong> Cratz Pad'
             + '<br><br>'
             + '<strong>Version:</strong> 1.0.0'
