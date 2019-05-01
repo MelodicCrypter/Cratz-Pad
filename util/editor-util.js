@@ -228,15 +228,9 @@ function textSelExecFontStyle(o) {
         // grandParent then parent then tag, so div would always be first tag
         newContent = `<${o.newTag}>${o.content}</${o.newTag}>`;
 
-        window.document.designMode = 'On';
-
         // replace the selected texts with its corresponding tags
         document.execCommand('delete', false, null);
-
         document.execCommand('insertHTML', false, newContent);
-
-        window.document.designMode = 'Off';
-
        // o.nodeParent.closest('pre').innerHTML += newContent;
     }
 }
