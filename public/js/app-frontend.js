@@ -40,6 +40,7 @@ import * as TextareaEditor from '../../util/editor-util';
 import * as Caret from '../../util/caret-utils';
 import checkWhichKey from '../../util/keyboard-util';
 import toggler from '../../util/toggler-util';
+import { rangeAtIndex } from '../../util/editor-util';
 
 // ==============================================================================
 // Set up: Basic Settings before the DOM contents are loaded
@@ -77,7 +78,7 @@ $(window).on('load', () => {
         if (is.chrome()) {
             $('#main-container').show();
             $('#loader').detach(); // detach the loader element from the DOM
-            Caret.putCursorAtEnd(document.getElementById('textarea')); // focus on the contenteditable
+            Caret.putCursorAtEnd(document.getElementById('textarea').lastChild); // focus on the contenteditable
         }
     }, 2000);
 });
@@ -99,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ::::The 'textarea' which in this case is a contenteditable: both jQuery and vanilla
     const textarea = document.getElementById('textarea');
     const textareaEditor = document.getElementsByClassName('editor');
-    const textareaJQuery = $('div[contenteditable="true"]');
+    const textareaJQuery = $('section[contenteditable="true"]');
 
     // ::::The class for the bottom menus
     const menuButtons = $('.bott-nav');
@@ -171,10 +172,22 @@ document.addEventListener('DOMContentLoaded', () => {
     let caretPosition; // for the cursor position
     let rangeStart; // will hold the start of the selected range
     let rangeEnd; // will hold the end of the selected range
+    let textCount;
+    let textPreTagCount;
+
+    textarea.addEventListener('focus', () => {
+        textCount = textarea.innerText.length;
+        textPreTagCount = textarea.firstElementChild.textContent.length;
+    });
 
     // ========> Listen for any texts selection
     // This event is very vital cause in this section, selectedTexts, caretPosition, and textState will be set
     textareaJQuery.bind('mouseup keyup mousedown touchend', (e) => {
+
+        textCount = textarea.innerText.length;
+        textPreTagCount = textarea.firstElementChild.textContent.length;
+
+
         // 1. Disable double click for selecting texts
         if (e.detail > 1) {
             e.preventDefault();
@@ -189,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 caretPosition = Caret.getCaretPos(textarea);
                 winSel = TextareaEditor.mozGetSelections(); // object of selections for mozilla
 
-                // Get the start and end ranges, so that we can mimic, only needed if chrome
+                // Get the start and end ranges, so that we can mimic
                 const proRanger = TextareaEditor.proRanger(textareaEditor);
                 rangeStart = proRanger.start;
                 rangeEnd = proRanger.end;
@@ -204,6 +217,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const proRanger = TextareaEditor.proRanger(textareaEditor);
                 rangeStart = proRanger.start;
                 rangeEnd = proRanger.end;
+
+                console.log(rangeStart, rangeEnd);
             }
 
             // 2.3 Check if winSel.selectedTexts has an emoji
@@ -274,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.execCommand('selectAll', false, null);
 
         // 3. Get the selection
-        const datatext = window.getSelection().toString();
+        const datatext = window.getSelection();
 
         // 4. Create a new Blob
         const blob = new Blob([datatext], { type: 'text/plain;charset=utf-8' });
@@ -312,7 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // =========> When B or I or U buttons are clicked
-    $('#edit-bold, #edit-italic, #edit-underline').on('click', function (e) {
+    $('#edit-bold, #edit-italic, #edit-underline, #edit-left, #edit-center, #edit-right, #edit-justify').on('click', function (e) {
         // 1. Double check everything, if only texts were selected
         // no need to worry if it contains emojis cause it has been taken care of above
         const tests = ['undefined', 'emptyString'];
@@ -327,28 +342,50 @@ document.addEventListener('DOMContentLoaded', () => {
         // 2. Assign the tag whether 'strong', 'em', or 'u'
         const uniqueTag = $(this).attr('data-unique-tag');
 
+        // const commands = ['italic', 'underline', 'justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'];
+        //
+        // const yes = commands.includes(uniqueTag);
+
         // 3. Setup the options for process B button
         const options = {
             rangeStart,
             rangeEnd,
             target: textarea,
             content: winSel.selectedTexts,
+            contentLen: winSel.selectedTextsLen,
+            textOverallLen: textCount,
             tag: winSel.textNodeVal,
             tagParent: winSel.textNodeParentVal,
             tagGrandParent: winSel.textNodeGrandParentVal,
+            tagGrandestParent: winSel.textNodeGrandGrandParentVal,
+            nodeParent: winSel.parent,
             newTag: uniqueTag,
         };
-        // 3.1 Start the process
-        TextareaEditor.textSelExec(options);
+
+        console.log(options.textOverallLen, options.contentLen);
+
+
+
+        TextareaEditor.textSelExecFontStyle(options);
+
+
+
+        window.getSelection().removeAllRanges();
 
         // 4. Disable menu buttons
         TextareaEditor.disableMenuButtons(menuButtons);
+
+        //Caret.putCursorAtEnd();
+        Caret.setCaretPos(caretPosition);
+        textarea.focus();
+
     });
 
     // ==============================================================================
     // Listening for keydown events for Menu Buttons
     // ==============================================================================
     textarea.addEventListener('keydown', (e) => {
+
         // 1. Determine which key was pressed
         const key = checkWhichKey(e);
 
@@ -390,7 +427,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
 
                 // 3.1.7 Start the process
-                TextareaEditor.textSelExec(options);
+                TextareaEditor.textSelExecFontStyle(options);
 
                 // 3.1.8 Disable menu buttons
                 TextareaEditor.disableMenuButtons(menuButtons);
@@ -398,6 +435,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 // 3.1.6 If selected texts contains some emjois then show modal alert
                 TextareaEditor.modalShow(modalTarget, modalBody, "😔 Emojis doesn't look great when styled. Text only please.");
             }
+        }
+
+        if (e.metaKey && key === 'v') {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const receiver = document.getElementById('receiver');
+            receiver.focus();
+            document.execCommand('paste', false, null);
         }
 
         // 4. If TAB key was pressed, and HOT-KEYS are enabled
@@ -421,10 +467,26 @@ document.addEventListener('DOMContentLoaded', () => {
             document.execCommand('insertHTML', false, '&#009');
         }
 
+        // 6.
+        if (key === 'Del') {
+            textPreTagCount = textarea.firstElementChild.textContent.length;
+            if (textPreTagCount === 0) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }
+
+        if (key === 'Enter') {
+           e.preventDefault();
+            document.execCommand('insertParagraph', false);
+            document.execCommand('formatBlock', false, 'pre');
+        }
+
+        // NOTE: THIS SECTION IS DISCONTINUED
         if (is.firefox()) {
             if (key === 'Enter') {
                 e.preventDefault();
-                document.execCommand('insertLineBreak');
+                document.execCommand('insertBrOnReturn');
                 // return false;
             }
         }
@@ -433,39 +495,51 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==============================================================================
     // Listening for keydown events for Menu Buttons Left Center Right Justify
     // ==============================================================================
-    $('#edit-left, #edit-center, #edit-right, #edit-justify').on('click', function (e) {
-        e.preventDefault();
-
-        // 1. Assign the tag whether 'strong', 'em', or 'u'
-        const uniqueTag = $(this).attr('data-unique-tag');
-
-        if (uniqueTag === 'left') {
-            textareaJQuery
-                .removeClass('align-all-center align-all-right align-all-justify')
-                .addClass('align-all-left');
-        }
-
-        if (uniqueTag === 'center') {
-            textareaJQuery
-                .removeClass('align-all-left align-all-right align-all-justify')
-                .addClass('align-all-center');
-        }
-
-        if (uniqueTag === 'right') {
-            textareaJQuery
-                .removeClass('align-all-center align-all-left align-all-justify')
-                .addClass('align-all-right');
-        }
-
-        if (uniqueTag === 'justify') {
-            textareaJQuery
-                .removeClass('align-all-center align-all-right align-all-left')
-                .addClass('align-all-justify');
-        }
-    });
+    // $('#edit-left, #edit-center, #edit-right, #edit-justify').on('click', function (e) {
+    //     e.preventDefault();
+    //     e.stopPropagation();
+    //
+    //     // create a range
+    //     const range = TextareaEditor.rangeAtIndex(textarea, rangeStart, rangeEnd);
+    //
+    //     // set the range
+    //     const sel = document.getSelection();
+    //     sel.removeAllRanges();
+    //     sel.addRange(range);
+    //
+    //     // 1. Assign the tag whether 'strong', 'em', or 'u'
+    //     const uniqueTag = $(this).attr('data-unique-tag');
+    //
+    //     // if (uniqueTag === 'left') {
+    //     //     textareaJQuery
+    //     //         .removeClass('align-all-center align-all-right align-all-justify')
+    //     //         .addClass('align-all-left');
+    //     // }
+    //
+    //     if (uniqueTag === 'center') {
+    //         // textareaJQuery
+    //         // .removeClass('align-all-left align-all-right align-all-justify')
+    //         // .addClass('align-all-center');
+    //         document.execCommand('styleWithCSS', false, null);
+    //         console.log('centered');
+    //     }
+    //
+    //     // if (uniqueTag === 'right') {
+    //     //     textareaJQuery
+    //     //         .removeClass('align-all-center align-all-left align-all-justify')
+    //     //         .addClass('align-all-right');
+    //     // }
+    //
+    //     // if (uniqueTag === 'justify') {
+    //     //     textareaJQuery
+    //     //         .removeClass('align-all-center align-all-right align-all-left')
+    //     //         .addClass('align-all-justify');
+    //     // }
+    // });
 
     // Todo
     // create shortcut for text-aligns
+    // and fix align, cause it will align all text, what if just a part you want to align
     // fix enable/disable hot-keys
     // themes
     // EVENT LISTENER FOR CLOSING THE WINDOW or Tab ==============

@@ -53,7 +53,8 @@ function chromeGetSelections() {
         textNodeVal: winSel.anchorNode.parentElement.nodeName.toString().toLowerCase().trim(),
         textNodeParentVal: winSel.anchorNode.parentElement.parentElement.nodeName.toString().toLowerCase().trim(),
         textNodeGrandParentVal: winSel.anchorNode.parentElement.parentElement.parentElement.nodeName.toString().toLowerCase().trim(),
-        addClassToParent: winSel.anchorNode.parentElement.classList,
+        textNodeGrandGrandParentVal: winSel.anchorNode.parentElement.parentElement.parentElement.parentElement.nodeName.toString().toLowerCase().trim(),
+        addClassToParent: winSel.anchorNode.parentElement.classList.add,
         addIdToParent: winSel.anchorNode.parentElement,
         addAttToParent: winSel.anchorNode.parentElement,
     };
@@ -84,19 +85,19 @@ function disableMenuButtons(target) {
  * rangeEnd,            the end of the range
  * target: textarea,    the dom element
  * content: winSel.selectedTexts,   the selected texts
- * tag: winSel.textNodeVal,         the firstChild tag, e.g <em> etc
+ * tag: winSel.textNodeVal,         the firstChild tag, e.g <i> etc
  * tagParent: winSel.textNodeParentVal,     the Parent tag
  * tagGrandParent: winSel.textNodeGrandParentVal,   the Grand parent tag
  * newTag: 'strong',    the new tag that you wish to apply
  *
  * basically, the pattern here would be always
- * <strong><em><u> content </u></em></strong>
+ * <strong><i><u> content </u></i></strong>
  * it will never change. Even if strong was clicked last, it will still be
  * formatted like that.
  *
  * So, <grandParent><parent><tag> content </tag></parent></grandParent>
  */
-function textSelExec(o) {
+function textSelExecFontStyle(o) {
     let newContent;
 
     // create a range
@@ -107,9 +108,9 @@ function textSelExec(o) {
     sel.removeAllRanges();
     sel.addRange(range);
 
-    if (o.tagGrandParent === 'strong' && o.tagParent === 'em' && o.tag === 'u') {
+    if (o.tagGrandParent === 'strong' && o.tagParent === 'i' && o.tag === 'u') {
         if (o.newTag === 'strong') {
-            newContent = `<em><u>${o.content}</u></em>`;
+            newContent = `<i><u>${o.content}</u></i>`;
         }
 
         if (o.newTag === 'em') {
@@ -117,18 +118,18 @@ function textSelExec(o) {
         }
 
         if (o.newTag === 'u') {
-            newContent = `<strong><em>${o.content}</em></strong>`;
+            newContent = `<strong><i>${o.content}</i></strong>`;
         }
 
         // replace the selected texts
         document.execCommand('insertHTML', false, newContent);
-    } else if (o.tagGrandParent === 'div' && o.tagParent === 'em') {
+    } else if (o.tagGrandParent === 'pre' && o.tagParent === 'i') {
         if (o.tag === 'u' && o.newTag === 'strong') {
-            newContent = `<strong><em><u>${o.content}</u></em></strong>`;
+            newContent = `<strong><i><u>${o.content}</u></i></strong>`;
         }
 
         if (o.tag === 'u' && o.newTag === 'u') {
-            newContent = `<em>${o.content}</em>`;
+            newContent = `<i>${o.content}</i>`;
         }
 
         if (o.tagParent === o.newTag) {
@@ -137,20 +138,20 @@ function textSelExec(o) {
 
         // replace the selected texts
         document.execCommand('insertHTML', false, newContent);
-    } else if (o.tagGrandParent === 'div' && o.tagParent === 'strong') {
-        if (o.tag === 'u' && o.newTag === 'em') {
-            newContent = `<strong><em><u>${o.content}</u></em></strong>`;
+    } else if (o.tagGrandParent === 'pre' && o.tagParent === 'strong') {
+        if (o.tag === 'u' && o.newTag === 'i') {
+            newContent = `<strong><i><u>${o.content}</u></i></strong>`;
         }
 
         if (o.tag === 'u' && o.newTag === 'u') {
             newContent = `<strong>${o.content}</strong>`;
         }
 
-        if (o.tag === 'em' && o.newTag === 'u') {
-            newContent = `<strong><em><u>${o.content}</u></em></strong>`;
+        if (o.tag === 'i' && o.newTag === 'u') {
+            newContent = `<strong><i><u>${o.content}</u></i></strong>`;
         }
 
-        if (o.tag === 'em' && o.newTag === 'em') {
+        if (o.tag === 'i' && o.newTag === 'i') {
             newContent = `<strong>${o.content}</strong>`;
         }
 
@@ -158,19 +159,19 @@ function textSelExec(o) {
             newContent = `<u>${o.content}</u>`;
         }
 
-        if (o.tag === 'em' && o.newTag === 'strong') {
-            newContent = `<em>${o.content}</em>`;
+        if (o.tag === 'i' && o.newTag === 'strong') {
+            newContent = `<i>${o.content}</i>`;
         }
 
         // replace the selected texts
         document.execCommand('insertHTML', false, newContent);
-    } else if (o.tagGrandParent === 'main' && o.tagParent === 'div' && o.tag === 'u') {
+    } else if (o.tagGrandestParent === 'main' && o.tagGrandParent === 'section' && o.tagParent === 'pre' && o.tag === 'u') {
         if (o.newTag === 'strong') {
             newContent = `<strong><u>${o.content}</u></strong>`;
         }
 
-        if (o.newTag === 'em') {
-            newContent = `<em><u>${o.content}</u></em>`;
+        if (o.newTag === 'i') {
+            newContent = `<i><u>${o.content}</u></i>`;
         }
 
         if (o.newTag === o.tag) {
@@ -179,13 +180,13 @@ function textSelExec(o) {
 
         // replace the selected texts
         document.execCommand('insertHTML', false, newContent);
-    } else if (o.tagGrandParent === 'main' && o.tagParent === 'div' && o.tag === 'em') {
+    } else if (o.tagGrandestParent === 'main' && o.tagGrandParent === 'section' && o.tagParent === 'pre' && o.tag === 'i') {
         if (o.newTag === 'strong') {
-            newContent = `<strong><em>${o.content}</em></strong>`;
+            newContent = `<strong><i>${o.content}</i></strong>`;
         }
 
         if (o.newTag === 'u') {
-            newContent = `<em><u>${o.content}</u></em>`;
+            newContent = `<i><u>${o.content}</u></i>`;
         }
 
         if (o.newTag === o.tag) {
@@ -194,9 +195,9 @@ function textSelExec(o) {
 
         // replace the selected texts
         document.execCommand('insertHTML', false, newContent);
-    } else if (o.tagGrandParent === 'main' && o.tagParent === 'div' && o.tag === 'strong') {
-        if (o.newTag === 'em') {
-            newContent = `<strong><em>${o.content}</em></strong>`;
+    } else if (o.tagGrandestParent === 'main' && o.tagGrandParent === 'section' && o.tagParent === 'pre' && o.tag === 'strong') {
+        if (o.newTag === 'i') {
+            newContent = `<strong><i>${o.content}</i></strong>`;
         }
 
         if (o.newTag === 'u') {
@@ -209,15 +210,73 @@ function textSelExec(o) {
 
         // replace the selected texts
         document.execCommand('insertHTML', false, newContent);
-    } else if (o.tagGrandParent === 'div' && o.tagParent === 'main' && o.tag === 'div') {
+    } else if (o.newTag === 'align-all-left' || o.newTag === 'align-all-center' || o.newTag === 'align-all-right' || o.newTag === 'align-all-justify') {
+        if (o.contentLen === o.textOverallLen) {
+            const preSelectors = document.querySelector('#textarea').querySelectorAll('pre');
+
+            preSelectors.forEach((pre) => {
+                pre.className = '';
+                pre.classList.add(o.newTag);
+            });
+        } else {
+            o.nodeParent.closest('pre').className = '';
+            o.nodeParent.closest('pre').classList.add(o.newTag);
+        }
+    } else if (o.tagGrandestParent === 'div' && o.tagGrandParent === 'main' && o.tagParent === 'section' && o.tag === 'pre') {
         // mostly the o.tag here is 'div', it means the text/s has no tags yet
         // basing on the pattern mentioned above, it should be
         // grandParent then parent then tag, so div would always be first tag
         newContent = `<${o.newTag}>${o.content}</${o.newTag}>`;
 
+        window.document.designMode = 'On';
+
         // replace the selected texts with its corresponding tags
+        document.execCommand('delete', false, null);
+
         document.execCommand('insertHTML', false, newContent);
+
+        window.document.designMode = 'Off';
+
+       // o.nodeParent.closest('pre').innerHTML += newContent;
     }
+}
+
+
+function textSelExecBold(o) {
+    let newContent;
+
+    // create a range
+    const range = rangeAtIndex(o.target, o.rangeStart, o.rangeEnd);
+
+    // set the range
+    const sel = document.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+
+    // if (o.tag === 'b') {
+    //     newContent = `${o.content}`;
+    //
+    //     // replace the selected texts
+    //     document.execCommand('insertHTML', false, newContent);
+    // } else {
+    //     newContent = `<b>${o.content}</b>`;
+    //
+    //     // replace the selected texts
+    //     document.execCommand('insertHTML', false, newContent);
+    // }
+    o.tag.closest(strong);
+}
+
+function textSelExecAlign(o) {
+    // create a range
+    const range = rangeAtIndex(o.target, o.rangeStart, o.rangeEnd);
+
+    // set the range
+    const sel = document.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+
+    document.execCommand(o.newTag, false, null);
 }
 
 function validateSelStr(tests, subject, passStat) {
@@ -494,10 +553,12 @@ export {
     enableMenuButtons,
     disableMenuButtons,
     proRanger,
-    textSelExec,
+    textSelExecFontStyle,
+    textSelExecBold,
     validateSelStr,
     modalShow,
     modalShowMod,
     downloader,
+    textSelExecAlign,
     validateSelStrIfNot,
 };

@@ -27,6 +27,11 @@ function checkWhichKey(event) {
         key = 'Ctrl';
     }
 
+    // If Delete was pressed
+    if (event.which === 8 || event.key === 'Backspace') {
+        key = 'Del';
+    }
+
     // If a was pressed
     if (event.which === 65) {
         key = 'a';
@@ -55,6 +60,11 @@ function checkWhichKey(event) {
     // If r was pressed
     if (event.which === 82) {
         key = 'r';
+    }
+
+    // If v was pressed
+    if (event.which === 86) {
+        key = 'v';
     }
 
     // If 1 was pressed
