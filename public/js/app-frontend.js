@@ -99,6 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ::::The 'textarea' which in this case is a contenteditable: both jQuery and vanilla
     const textarea = document.getElementById('textarea');
+    const textareaSelector = document.querySelector('[contenteditable]');
     const textareaEditor = document.getElementsByClassName('editor');
     const textareaJQuery = $('section[contenteditable="true"]');
 
@@ -183,7 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // ========> Listen for any texts selection
     // This event is very vital cause in this section, selectedTexts, caretPosition, and textState will be set
     textareaJQuery.bind('mouseup keyup mousedown touchend', (e) => {
-
         textCount = textarea.innerText.length;
         textPreTagCount = textarea.firstElementChild.textContent.length;
 
@@ -234,6 +234,20 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+
+    // function handlePaste(e) {
+    //     let clipboardData, pastedData;
+    //
+    //     // Stop data actually being pasted into div
+    //     e.stopPropagation();
+    //     e.preventDefault();
+    //
+    //     // Get pasted data via clipboard API
+    //     clipboardData = e.clipboardData || window.clipboardData;
+    //     pastedData = clipboardData.getData('Text/Plain').trim();
+    // }
+    //
+    // document.addEventListener('paste', handlePaste);
 
     // ===============================================================================
     // Button Menus : Click Events
@@ -364,28 +378,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
         console.log(options.textOverallLen, options.contentLen);
 
-
+        window.document.designMode = 'On';
 
         TextareaEditor.textSelExecFontStyle(options);
 
-
-
-        window.getSelection().removeAllRanges();
+        window.document.designMode = 'Off';
 
         // 4. Disable menu buttons
         TextareaEditor.disableMenuButtons(menuButtons);
 
-        //Caret.putCursorAtEnd();
+        // Caret.putCursorAtEnd();
         Caret.setCaretPos(caretPosition);
         textarea.focus();
-
     });
 
     // ==============================================================================
     // Listening for keydown events for Menu Buttons
     // ==============================================================================
     textarea.addEventListener('keydown', (e) => {
-
         // 1. Determine which key was pressed
         const key = checkWhichKey(e);
 
@@ -437,15 +447,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        if (e.metaKey && key === 'v') {
-            e.preventDefault();
-            e.stopPropagation();
-
-            const receiver = document.getElementById('receiver');
-            receiver.focus();
-            document.execCommand('paste', false, null);
-        }
-
         // 4. If TAB key was pressed, and HOT-KEYS are enabled
         if (!disableShortcuts && key === 'Tab') {
             e.preventDefault();
@@ -477,9 +478,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (key === 'Enter') {
-           e.preventDefault();
+            e.preventDefault();
             document.execCommand('insertParagraph', false);
             document.execCommand('formatBlock', false, 'pre');
+
+            // This is still on debug mode
+            const newPre = document.createElement('pre');
+            textarea.insertAdjacentElement('beforeend', newPre);
         }
 
         // NOTE: THIS SECTION IS DISCONTINUED
@@ -491,51 +496,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }, false);
-
-    // ==============================================================================
-    // Listening for keydown events for Menu Buttons Left Center Right Justify
-    // ==============================================================================
-    // $('#edit-left, #edit-center, #edit-right, #edit-justify').on('click', function (e) {
-    //     e.preventDefault();
-    //     e.stopPropagation();
-    //
-    //     // create a range
-    //     const range = TextareaEditor.rangeAtIndex(textarea, rangeStart, rangeEnd);
-    //
-    //     // set the range
-    //     const sel = document.getSelection();
-    //     sel.removeAllRanges();
-    //     sel.addRange(range);
-    //
-    //     // 1. Assign the tag whether 'strong', 'em', or 'u'
-    //     const uniqueTag = $(this).attr('data-unique-tag');
-    //
-    //     // if (uniqueTag === 'left') {
-    //     //     textareaJQuery
-    //     //         .removeClass('align-all-center align-all-right align-all-justify')
-    //     //         .addClass('align-all-left');
-    //     // }
-    //
-    //     if (uniqueTag === 'center') {
-    //         // textareaJQuery
-    //         // .removeClass('align-all-left align-all-right align-all-justify')
-    //         // .addClass('align-all-center');
-    //         document.execCommand('styleWithCSS', false, null);
-    //         console.log('centered');
-    //     }
-    //
-    //     // if (uniqueTag === 'right') {
-    //     //     textareaJQuery
-    //     //         .removeClass('align-all-center align-all-left align-all-justify')
-    //     //         .addClass('align-all-right');
-    //     // }
-    //
-    //     // if (uniqueTag === 'justify') {
-    //     //     textareaJQuery
-    //     //         .removeClass('align-all-center align-all-right align-all-left')
-    //     //         .addClass('align-all-justify');
-    //     // }
-    // });
 
     // Todo
     // create shortcut for text-aligns
