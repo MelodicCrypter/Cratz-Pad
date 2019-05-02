@@ -211,8 +211,18 @@ function textSelExecFontStyle(o) {
         // replace the selected texts
         document.execCommand('insertHTML', false, newContent);
     } else if (o.newTag === 'align-all-left' || o.newTag === 'align-all-center' || o.newTag === 'align-all-right' || o.newTag === 'align-all-justify') {
-        console.log(o.contentLen + 1, o.textOverallLen);
-        if (o.contentLen + 1 === o.textOverallLen) {
+        let contentLength;
+        const textOverallLength = o.textOverallLen;
+
+        if (isChromium()) {
+            console.log('chromium');
+            contentLength = o.contentLen + 1;
+        } else {
+            console.log('not chromium');
+            contentLength = o.contentLen;
+        }
+
+        if (contentLength === textOverallLength) {
             const preSelectors = document.querySelectorAll('pre');
 
             preSelectors.forEach((pre) => {
@@ -356,6 +366,18 @@ function downloader(filename, data) {
     document.body.appendChild(target);
     target.click();
     document.body.removeChild(target);
+}
+
+// snippet by Stefan Steiger
+// https://stackoverflow.com/questions/17278770/how-do-i-detect-chromium-specifically-vs-chrome
+function isChromium() {
+    for (let i = 0, u = 'Chromium', l = u.length; i < navigator.plugins.length; i++) {
+        if (navigator.plugins[i].name != null && navigator.plugins[i].name.substr(0, l) === u) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 // snippet by Xeoncross, but modified it a bit
