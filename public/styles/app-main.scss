@@ -246,6 +246,23 @@ body {
     }
   }
 
+  &.align-all-left {
+    text-align: left !important;
+    white-space: pre-wrap !important;
+  }
+  &.align-all-center {
+    text-align: center !important;
+    white-space: pre-wrap !important;
+  }
+  &.align-all-right {
+    text-align: right !important;
+    white-space: pre-wrap !important;
+  }
+  &.align-all-justify {
+    text-align: justify !important;
+    white-space: pre-wrap !important;
+  }
+
   &:focus {
     border: none !important;
     outline: 0px solid transparent;
@@ -265,6 +282,14 @@ body {
   }
   &::placeholder {
     color: rgba(187, 187, 187, 0.48) !important;
+  }
+}
+.modal-links {
+  text-decoration: none;
+
+  img {
+    width: 40px;
+    display: inline-block;
   }
 }
 .bold {
@@ -416,7 +441,7 @@ header {
 }
 
 .modal {
-  #appLogoModal {
+  #appLogoModal, #appLogoDownloadModal {
     width: 32px;
   }
   .modal-header {

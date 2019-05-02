@@ -15,7 +15,7 @@ ${header}
     </header>
 
     <main id="main-box" role="main" class="inner cover">
-      <section contenteditable="true" id="textarea" class="col-lg-12 editor" placeholder="" spellcheck="true" autofocus><pre>God is good and amazing!</pre><pre>Yes, amen! Indeed He is goood! </pre></section>
+      <section contenteditable="true" id="textarea" class="col-lg-12 editor" placeholder="" spellcheck="true" autofocus>God is amazing and good! <strong><em><u>God indeed</u></em></strong> test <em>good</em> amazing <u>hugh</u> strong <strong><em>yahoo!</em></strong></section>
       <span id="emoji-button"></span>
     </main>
 
@@ -27,7 +27,7 @@ ${header}
               <a id="edit-bold" class="nav-link bott-nav disabled" data-toggle="tooltip" data-placement="top" title="Bold" data-unique-tag='strong'><i class="fas fa-bold icons"></i></a>
             </li>
             <li class="nav-item px-1">
-              <a id="edit-italic" class="nav-link bott-nav disabled" data-toggle="tooltip" data-placement="top" title="Italic" data-unique-tag='i'><i class="fas fa-italic icons"></i></a>
+              <a id="edit-italic" class="nav-link bott-nav disabled" data-toggle="tooltip" data-placement="top" title="Italic" data-unique-tag='em'><i class="fas fa-italic icons"></i></a>
             </li>
             <li class="nav-item px-1">
               <a id="edit-underline" class="nav-link bott-nav disabled" data-toggle="tooltip" data-placement="top" title="Underline" data-unique-tag='u'><i class="fas fa-underline icons"></i></a>
@@ -36,16 +36,16 @@ ${header}
               <a class="nav-link disabled"><i class="fas fa-ellipsis-v icons divider"></i></a>
             </li>
             <li class="nav-item px-1">
-              <a id="edit-left" class="nav-link bott-nav disabled" data-toggle="tooltip" data-placement="top" title="Left" data-unique-tag='align-all-left'><i class="fas fa-align-left icons"></i></a>
+              <a id="edit-left" class="nav-link" data-toggle="tooltip" data-placement="top" title="Left" data-unique-tag='align-all-left'><i class="fas fa-align-left icons"></i></a>
             </li>
             <li class="nav-item px-1">
-              <a id="edit-center" class="nav-link bott-nav disabled" data-toggle="tooltip" data-placement="top" title="Center" data-unique-tag='align-all-center'><i class="fas fa-align-center icons"></i></a>
+              <a id="edit-center" class="nav-link" data-toggle="tooltip" data-placement="top" title="Center" data-unique-tag='align-all-center'><i class="fas fa-align-center icons"></i></a>
             </li>
             <li class="nav-item px-1">
-              <a id="edit-right" class="nav-link bott-nav disabled" data-toggle="tooltip" data-placement="top" title="Right" data-unique-tag='align-all-right'><i class="fas fa-align-right icons"></i></a>
+              <a id="edit-right" class="nav-link" data-toggle="tooltip" data-placement="top" title="Right" data-unique-tag='align-all-right'><i class="fas fa-align-right icons"></i></a>
             </li>
             <li class="nav-item px-1">
-              <a id="edit-justify" class="nav-link bott-nav disabled" data-toggle="tooltip" data-placement="top" title="Justify" data-unique-tag='align-all-justify'><i class="fas fa-align-justify icons"></i></a>
+              <a id="edit-justify" class="nav-link" data-toggle="tooltip" data-placement="top" title="Justify" data-unique-tag='align-all-justify'><i class="fas fa-align-justify icons"></i></a>
             </li>
             <li class="nav-item disabled px-1">
               <a class="nav-link disabled"><i class="fas fa-ellipsis-v icons divider"></i></a>
@@ -85,9 +85,29 @@ ${header}
     </div>
   </div>
 
+  <div style="display: none;" class="modal fade" id="modalDownload" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle"><img id="appLogoDownloadModal" src=""></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="input-group mb-3">
+            <input id="download-filename" type="text" class="form-control" placeholder="Type Your Filename Here" aria-label="Filename">
+            <div class="input-group-append">
+              <button id="download-filename-btn" class="btn btn-outline-secondary" type="button">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="loader" class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column show-on-load">
     <header class="masthead mb-auto fixed-top pt-3 pb-3">
-
     </header>
 
     <main id="loader-box" role="main" class="inner cover">
@@ -108,6 +128,30 @@ ${header}
         <p>It is not my intention to let you down, however, I really recommend that you use Chrome.</p>
         <p>If ever you don't want to use a Chrome browser, may I suggest you download the desktop version of <em>Cratz Pad</em>.</p>
         <p>Thank you! 🙏😊</p>
+        <br>
+        <br>
+        <ul style="text-align: center; list-style: none;">
+          <li style="display: inline !important;">Windows</li>
+          <li style="display: inline !important;">&nbsp; </li>
+          <li style="display: inline !important;">&nbsp; </li>
+          <li style="display: inline !important;">&nbsp; </li>
+          <li style="display: inline !important;">&nbsp; </li>
+          <li style="display: inline !important;">&nbsp; </li>
+          <li style="display: inline !important;">&nbsp; </li>
+          <li style="display: inline !important;">&nbsp; </li>
+          <li style="display: inline !important;">&nbsp; </li>
+          <li style="display: inline !important;">&nbsp; </li>
+          <li style="display: inline !important;">&nbsp; </li>
+          <li style="display: inline !important;">Mac OS</li>
+        </ul>
+      </div>
+    </section>
+
+    <section style="display: none !important;" id="downloadMsg">
+      <button id="closeDownloadMsg" class="btn-dark">Close Me</button>
+      <div style="line-height: 16px;">
+        <p>Hi. 😊 Thank you for using Cratz Pad. 🙏</p>
+        <p>If you want to use Cratz Pad as standalone desktop app, you can by downloading it below.</p>
         <br>
         <br>
         <ul style="text-align: center; list-style: none;">

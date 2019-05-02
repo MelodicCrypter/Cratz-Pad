@@ -34,6 +34,8 @@ import emojiButtonSVG from '../img/emoji-btn.svg';
 import favIcoPath from '../img/favicon.ico';
 import appLogoPath from '../img/cratz-pad-app-logo.png';
 import loaderImgPath from '../img/loader.gif';
+import windowsLogoPath from '../img/windows-logo.png';
+import appleLogoPath from '../img/apple-logo.png';
 
 // Own Utility Modules
 import * as ButtonsEditor from '../../util/editor-buttons-utils';
@@ -41,7 +43,6 @@ import * as TextareaEditor from '../../util/editor-util';
 import * as Caret from '../../util/caret-utils';
 import checkWhichKey from '../../util/keyboard-util';
 import toggler from '../../util/toggler-util';
-import { rangeAtIndex } from '../../util/editor-util';
 
 // ==============================================================================
 // Set up: Basic Settings before the DOM contents are loaded
@@ -55,7 +56,10 @@ logo.src = appLogoPath;
 // 3. Load app logo for alert modals
 const logoImgAlertBox = document.getElementById('appLogoModal');
 logoImgAlertBox.src = appLogoPath;
-// 4. Load loader image
+// 4. Load app logo for download modal box
+const logoImgDownloadBox = document.getElementById('appLogoDownloadModal');
+logoImgDownloadBox.src = appLogoPath;
+// 5. Load loader image
 const loaderImgTag = document.getElementById('loader-img');
 loaderImgTag.src = loaderImgPath;
 
@@ -218,8 +222,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const proRanger = TextareaEditor.proRanger(textareaEditor);
                 rangeStart = proRanger.start;
                 rangeEnd = proRanger.end;
-
-                console.log(rangeStart, rangeEnd);
             }
 
             // 2.3 Check if winSel.selectedTexts has an emoji
@@ -235,20 +237,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
-
-    // function handlePaste(e) {
-    //     let clipboardData, pastedData;
-    //
-    //     // Stop data actually being pasted into div
-    //     e.stopPropagation();
-    //     e.preventDefault();
-    //
-    //     // Get pasted data via clipboard API
-    //     clipboardData = e.clipboardData || window.clipboardData;
-    //     pastedData = clipboardData.getData('Text/Plain').trim();
-    // }
-    //
-    // document.addEventListener('paste', handlePaste);
 
     // ===============================================================================
     // Button Menus : Click Events
@@ -297,42 +285,45 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#download-btn').on('click', (e) => {
         e.preventDefault();
 
-        // 1. Set focus on the conteneditable 'textarea'
-        textareaJQuery.focus();
+        $('#modalDownload').modal('show');
 
-        // 2. Select all inside the textarea
-        document.execCommand('selectAll', false, null);
-
-        // 3. Get the selection
-        const datatext = window.getSelection();
-
-        // 4. Create a new Blob
-        const blob = new Blob([datatext], { type: 'text/plain;charset=utf-8' });
-
-        // 5. Create file name and a random number for the filename
-        const randomNum = Math.floor(Math.random() * 90000) + 10000;
-        const filename = `Cratz-Pad-${randomNum}.txt`;
-
-        // 6. Save the file using file-save js
-        saveAs(blob, filename);
-
-        // 7. Remove all ranges
-        window.getSelection().removeAllRanges();
+        // // 1. Set focus on the conteneditable 'textarea'
+        // textareaJQuery.focus();
+        //
+        // // 2. Select all inside the textarea
+        // document.execCommand('selectAll', false, null);
+        //
+        // // 3. Get the selection
+        // const datatext = window.getSelection();
+        //
+        // // 4. Create a new Blob
+        // const blob = new Blob([datatext], { type: 'text/plain;charset=utf-8' });
+        //
+        // // 5. Create file name and a random number for the filename
+        // const randomNum = Math.floor(Math.random() * 90000) + 10000;
+        // const filename = `Cratz-Pad-${randomNum}.txt`;
+        //
+        // // 6. Save the file using file-save js
+        // saveAs(blob, filename);
+        //
+        // // 7. Remove all ranges
+        // window.getSelection().removeAllRanges();
     });
 
     // =========> When 'About' is clicked
     $('#about-app').on('click', (e) => {
         e.preventDefault();
 
-        TextareaEditor.modalShowMod(modalTarget, modalDialog, modalBody, ''
+        TextareaEditor.modalShowMod(modalTarget, modalDialog, modalBody, `${''
             + '<strong>Name:</strong> Cratz Pad'
             + '<br><br>'
             + '<strong>Version:</strong> 1.0.0'
             + '<br><br>'
-            + '<strong>About:</strong> <br>Cratz Pad is a really plain and simple app where users can type all they want.'
-            + ' Users can also download the file they are creating as plain text. You do not need to'
-            + ' create an account. So, if you do not want to download your file you can simply copy it'
-            + 'and paste it directly to your editor.'
+            + '<strong>About:</strong> &nbsp; Cratz Pad is a really plain and simple app. It is your on-the-fly scratch.'
+            + ' You do not need to create an account, start typing right away, and you can download your file as well. That easy.'
+            + ' If you want to use Cratz Pad as standalone desktop app, you can download it using these links:'
+            + '<br><br>'
+            + 'Windows  <a class="modal-links" href="#"><img src="'}${windowsLogoPath}"></a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Mac OS <a class="modal-links" href="#"><img src="${appleLogoPath}"></a>`
             + '<br><br>'
             + '<strong>Developer:</strong> Melodic Crypter'
             + '<br><br>'
@@ -358,9 +349,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const uniqueTag = $(this).attr('data-unique-tag');
 
 
-        let contentFinalLen = winSel.selectedTextsLen;
-        if (!is.chrome() || !is.firefox()) {
-            console.log('not chrome nor firefox: true');
+        let contentFinalLen;
+        if (is.chrome() || is.firefox()) {
+            contentFinalLen = winSel.selectedTextsLen;
+        } else {
             contentFinalLen = winSel.selectedTextsLen + 1;
         }
 
@@ -380,18 +372,35 @@ document.addEventListener('DOMContentLoaded', () => {
             newTag: uniqueTag,
         };
 
-        window.document.designMode = 'On';
-
         TextareaEditor.textSelExecFontStyle(options);
 
-        window.document.designMode = 'Off';
+        Caret.setCaretPos(rangeStart);
+
+        textarea.focus();
 
         // 4. Disable menu buttons
         TextareaEditor.disableMenuButtons(menuButtons);
+    });
 
-        // Caret.putCursorAtEnd();
-        Caret.setCaretPos(caretPosition);
+    // =========> When Left, Center, Right, Justify buttons are clicked
+    $('#edit-left, #edit-center, #edit-right, #edit-justify').on('click', function (e) {
+        // 2. Assign the tag whether 'strong', 'em', or 'u'
+        const uniqueTag = $(this).attr('data-unique-tag');
+
+        // 3. Setup the options for process B button
+        const options = {
+            target: textarea,
+            newTag: uniqueTag,
+        };
+
+        TextareaEditor.textSelExecFontStyle(options);
+
+        Caret.setCaretPos(rangeStart);
+
         textarea.focus();
+
+        // 4. Disable menu buttons
+        TextareaEditor.disableMenuButtons(menuButtons);
     });
 
     // ==============================================================================
@@ -415,39 +424,98 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             e.stopPropagation();
 
-            // 3.1.3 Determine what tag to put
-            key === 'b' ? uniqueTag = 'strong' : '';
-            key === 'i' ? uniqueTag = 'em' : '';
-            key === 'u' ? uniqueTag = 'u' : '';
+            if (!disableShortcuts) {
+                // 3.1.3 Determine what tag to put
+                key === 'b' ? uniqueTag = 'strong' : '';
+                key === 'i' ? uniqueTag = 'em' : '';
+                key === 'u' ? uniqueTag = 'u' : '';
 
-            // 3.1.4 This is needed cause if selected texts contains an emoji and one of menu button is clicked
-            // this will show a modal telling user why emoji can't be styled
-            emojiCheck.onlyEmoji(winSel.selectedTexts).length > 0 ? emojiSelected = true : emojiSelected = false;
+                // 3.1.4 This is needed cause if selected texts contains an emoji and one of menu button is clicked
+                // this will show a modal telling user why emoji can't be styled
+                emojiCheck.onlyEmoji(winSel.selectedTexts).length > 0 ? emojiSelected = true : emojiSelected = false;
 
-            // 3.1.5 if no emoji is included then proceed with the process
-            if (!emojiSelected) {
-                // 3.1.6 Setup the options for process B button
+                let contentFinalLen;
+                if (is.chrome() || is.firefox()) {
+                    contentFinalLen = winSel.selectedTextsLen;
+                } else {
+                    contentFinalLen = winSel.selectedTextsLen + 1;
+                }
+
+                // 3.1.5 if no emoji is included then proceed with the process
+                if (!emojiSelected) {
+                    // 3.1.6 Setup the options for process B button
+                    const options = {
+                        rangeStart,
+                        rangeEnd,
+                        target: textarea,
+                        content: winSel.selectedTexts,
+                        contentLen: contentFinalLen,
+                        textOverallLen: textCount,
+                        tag: winSel.textNodeVal,
+                        tagParent: winSel.textNodeParentVal,
+                        tagGrandParent: winSel.textNodeGrandParentVal,
+                        tagGrandestParent: winSel.textNodeGrandGrandParentVal,
+                        nodeParent: winSel.parent,
+                        newTag: uniqueTag,
+                    };
+
+                    // 3.1.7 Start the process
+                    TextareaEditor.textSelExecFontStyle(options);
+
+                    Caret.setCaretPos(rangeStart);
+
+                    textarea.focus();
+
+                    // 3.1.8 Disable menu buttons
+                    TextareaEditor.disableMenuButtons(menuButtons);
+                } else {
+                    // 3.1.6 If selected texts contains some emjois then show modal alert
+                    TextareaEditor.modalShow(modalTarget, modalBody, "😔 Emojis doesn't look great when styled. Text only please.");
+                }
+            } else {
+                // if Hot-Keys are disabled
+                TextareaEditor.modalShow(modalTarget, modalBody, 'Hot-Keys are disabled. Enable it again by clicking 👍 button');
+            }
+        }
+
+
+        if ((e.metaKey && key === '1')
+            || (e.metaKey && key === '2')
+            || (e.metaKey && key === '3')
+            || (e.metaKey && key === '4')
+            || (e.ctrlKey && key === '1')
+            || (e.ctrlKey && key === '2')
+            || (e.ctrlKey && key === '3')
+            || (e.ctrlKey && key === '4')) {
+            //
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (!disableShortcuts) {
+                key === '1' ? uniqueTag = 'align-all-left' : '';
+                key === '2' ? uniqueTag = 'align-all-center' : '';
+                key === '3' ? uniqueTag = 'align-all-right' : '';
+                key === '4' ? uniqueTag = 'align-all-justify' : '';
+
                 const options = {
-                    rangeStart,
-                    rangeEnd,
                     target: textarea,
-                    content: winSel.selectedTexts,
-                    tag: winSel.textNodeVal,
-                    tagParent: winSel.textNodeParentVal,
-                    tagGrandParent: winSel.textNodeGrandParentVal,
                     newTag: uniqueTag,
                 };
 
                 // 3.1.7 Start the process
                 TextareaEditor.textSelExecFontStyle(options);
 
+                Caret.setCaretPos(rangeStart);
+
+                textarea.focus();
+
                 // 3.1.8 Disable menu buttons
                 TextareaEditor.disableMenuButtons(menuButtons);
             } else {
-                // 3.1.6 If selected texts contains some emjois then show modal alert
-                TextareaEditor.modalShow(modalTarget, modalBody, "😔 Emojis doesn't look great when styled. Text only please.");
+                TextareaEditor.modalShow(modalTarget, modalBody, 'Hot-Keys are disabled. Enable it again by clicking 👍 button');
             }
         }
+
 
         // 4. If TAB key was pressed, and HOT-KEYS are enabled
         if (!disableShortcuts && key === 'Tab') {
@@ -471,37 +539,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // 6.
-        if (key === 'Del') {
-            textPreTagCount = textarea.firstElementChild.textContent.length;
-            if (textPreTagCount === 0) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-        }
+        // if (key === 'Del') {
+        //     textPreTagCount = textarea.firstElementChild.textContent.length;
+        //     if (textPreTagCount === 0) {
+        //         e.preventDefault();
+        //         e.stopPropagation();
+        //     }
+        // }
 
-        if (key === 'Enter') {
-            e.preventDefault();
-            document.execCommand('insertParagraph', false);
-            document.execCommand('formatBlock', false, 'pre');
-
-            // This is still on debug mode
-            const newPre = document.createElement('pre');
-            textarea.insertAdjacentElement('beforeend', newPre);
-        }
+        // if (key === 'Enter') {
+        //     e.preventDefault();
+        //     e.stopPropagation();
+        //     document.execCommand('insertParagraph', false);
+        //     document.execCommand('formatBlock', false, 'pre');
+        //
+        //     // This is still on debug mode
+        //     const newPre = document.createElement('hr');
+        //     textarea.insertAdjacentElement('beforeend', newPre);
+        // }
 
         // NOTE: THIS SECTION IS DISCONTINUED
-        if (is.firefox()) {
-            if (key === 'Enter') {
-                e.preventDefault();
-                document.execCommand('insertBrOnReturn');
-                // return false;
-            }
-        }
+        // if (is.firefox()) {
+        //     if (key === 'Enter') {
+        //         e.preventDefault();
+        //         e.stopPropagation();
+        //         document.execCommand('insertParagraph', false);
+        //         document.execCommand('insertHTML', false, '<>');
+        //         return false;
+        //     }
+        // }
     }, false);
 
     // Todo
     // create shortcut for text-aligns
-    // and fix align, cause it will align all text, what if just a part you want to align
     // fix enable/disable hot-keys
     // themes
     // EVENT LISTENER FOR CLOSING THE WINDOW or Tab ==============

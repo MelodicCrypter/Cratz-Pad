@@ -1,5 +1,7 @@
 // Utilities for the Editor
 
+import * as Caret from './caret-utils';
+
 // Normalizer for jQuery objects, if prefer dom nodes
 function nodeNormalizer(target) {
     let domTarget = target;
@@ -32,10 +34,12 @@ function mozGetSelections() {
     const selections = {
         selectedTexts: winSel.toString(),
         selectedTextsLen: winSel.toString().length,
+        parent: winSel.focusNode.parentElement,
         textNodeVal: winSel.focusNode.parentElement.nodeName.toString().toLowerCase().trim(),
         textNodeParentVal: winSel.focusNode.parentElement.parentElement.nodeName.toString().toLowerCase().trim(),
         textNodeGrandParentVal: winSel.focusNode.parentElement.parentElement.parentElement.nodeName.toString().toLowerCase().trim(),
-        addClassToParent: winSel.focusNode.parentElement.classList,
+        textNodeGrandGrandParentVal: winSel.focusNode.parentElement.parentElement.parentElement.parentElement.nodeName.toString().toLowerCase().trim(),
+        addClassToParent: winSel.focusNode.parentElement.classList.add,
         addIdToParent: winSel.focusNode.parentElement,
         addAttToParent: winSel.focusNode.parentElement,
     };
@@ -85,13 +89,13 @@ function disableMenuButtons(target) {
  * rangeEnd,            the end of the range
  * target: textarea,    the dom element
  * content: winSel.selectedTexts,   the selected texts
- * tag: winSel.textNodeVal,         the firstChild tag, e.g <i> etc
+ * tag: winSel.textNodeVal,         the firstChild tag, e.g <em> etc
  * tagParent: winSel.textNodeParentVal,     the Parent tag
  * tagGrandParent: winSel.textNodeGrandParentVal,   the Grand parent tag
  * newTag: 'strong',    the new tag that you wish to apply
  *
  * basically, the pattern here would be always
- * <strong><i><u> content </u></i></strong>
+ * <strong><em><u> content </u></em></strong>
  * it will never change. Even if strong was clicked last, it will still be
  * formatted like that.
  *
@@ -104,13 +108,13 @@ function textSelExecFontStyle(o) {
     const range = rangeAtIndex(o.target, o.rangeStart, o.rangeEnd);
 
     // set the range
-    const sel = document.getSelection();
+    const sel = window.getSelection();
     sel.removeAllRanges();
     sel.addRange(range);
 
-    if (o.tagGrandParent === 'strong' && o.tagParent === 'i' && o.tag === 'u') {
+    if (o.tagGrandParent === 'strong' && o.tagParent === 'em' && o.tag === 'u') {
         if (o.newTag === 'strong') {
-            newContent = `<i><u>${o.content}</u></i>`;
+            newContent = `<em><u>${o.content}</u></em>`;
         }
 
         if (o.newTag === 'em') {
@@ -118,18 +122,18 @@ function textSelExecFontStyle(o) {
         }
 
         if (o.newTag === 'u') {
-            newContent = `<strong><i>${o.content}</i></strong>`;
+            newContent = `<strong><em>${o.content}</em></strong>`;
         }
 
         // replace the selected texts
         document.execCommand('insertHTML', false, newContent);
-    } else if (o.tagGrandParent === 'pre' && o.tagParent === 'i') {
+    } else if (o.tagGrandParent === 'section' && o.tagParent === 'em') {
         if (o.tag === 'u' && o.newTag === 'strong') {
-            newContent = `<strong><i><u>${o.content}</u></i></strong>`;
+            newContent = `<strong><em><u>${o.content}</u></em></strong>`;
         }
 
         if (o.tag === 'u' && o.newTag === 'u') {
-            newContent = `<i>${o.content}</i>`;
+            newContent = `<em>${o.content}</em>`;
         }
 
         if (o.tagParent === o.newTag) {
@@ -138,20 +142,20 @@ function textSelExecFontStyle(o) {
 
         // replace the selected texts
         document.execCommand('insertHTML', false, newContent);
-    } else if (o.tagGrandParent === 'pre' && o.tagParent === 'strong') {
-        if (o.tag === 'u' && o.newTag === 'i') {
-            newContent = `<strong><i><u>${o.content}</u></i></strong>`;
+    } else if (o.tagGrandParent === 'section' && o.tagParent === 'strong') {
+        if (o.tag === 'u' && o.newTag === 'em') {
+            newContent = `<strong><em><u>${o.content}</u></em></strong>`;
         }
 
         if (o.tag === 'u' && o.newTag === 'u') {
             newContent = `<strong>${o.content}</strong>`;
         }
 
-        if (o.tag === 'i' && o.newTag === 'u') {
-            newContent = `<strong><i><u>${o.content}</u></i></strong>`;
+        if (o.tag === 'em' && o.newTag === 'u') {
+            newContent = `<strong><em><u>${o.content}</u></em></strong>`;
         }
 
-        if (o.tag === 'i' && o.newTag === 'i') {
+        if (o.tag === 'em' && o.newTag === 'em') {
             newContent = `<strong>${o.content}</strong>`;
         }
 
@@ -159,19 +163,19 @@ function textSelExecFontStyle(o) {
             newContent = `<u>${o.content}</u>`;
         }
 
-        if (o.tag === 'i' && o.newTag === 'strong') {
-            newContent = `<i>${o.content}</i>`;
+        if (o.tag === 'em' && o.newTag === 'strong') {
+            newContent = `<em>${o.content}</em>`;
         }
 
         // replace the selected texts
         document.execCommand('insertHTML', false, newContent);
-    } else if (o.tagGrandestParent === 'main' && o.tagGrandParent === 'section' && o.tagParent === 'pre' && o.tag === 'u') {
+    } else if (o.tagGrandParent === 'main' && o.tagParent === 'section' && o.tag === 'u') {
         if (o.newTag === 'strong') {
             newContent = `<strong><u>${o.content}</u></strong>`;
         }
 
-        if (o.newTag === 'i') {
-            newContent = `<i><u>${o.content}</u></i>`;
+        if (o.newTag === 'em') {
+            newContent = `<em><u>${o.content}</u></em>`;
         }
 
         if (o.newTag === o.tag) {
@@ -180,13 +184,13 @@ function textSelExecFontStyle(o) {
 
         // replace the selected texts
         document.execCommand('insertHTML', false, newContent);
-    } else if (o.tagGrandestParent === 'main' && o.tagGrandParent === 'section' && o.tagParent === 'pre' && o.tag === 'i') {
+    } else if (o.tagGrandParent === 'main' && o.tagParent === 'section' && o.tag === 'em') {
         if (o.newTag === 'strong') {
-            newContent = `<strong><i>${o.content}</i></strong>`;
+            newContent = `<strong><em>${o.content}</em></strong>`;
         }
 
         if (o.newTag === 'u') {
-            newContent = `<i><u>${o.content}</u></i>`;
+            newContent = `<em><u>${o.content}</u></em>`;
         }
 
         if (o.newTag === o.tag) {
@@ -195,9 +199,9 @@ function textSelExecFontStyle(o) {
 
         // replace the selected texts
         document.execCommand('insertHTML', false, newContent);
-    } else if (o.tagGrandestParent === 'main' && o.tagGrandParent === 'section' && o.tagParent === 'pre' && o.tag === 'strong') {
-        if (o.newTag === 'i') {
-            newContent = `<strong><i>${o.content}</i></strong>`;
+    } else if (o.tagGrandParent === 'main' && o.tagParent === 'section' && o.tag === 'strong') {
+        if (o.newTag === 'em') {
+            newContent = `<strong><em>${o.content}</em></strong>`;
         }
 
         if (o.newTag === 'u') {
@@ -211,67 +215,24 @@ function textSelExecFontStyle(o) {
         // replace the selected texts
         document.execCommand('insertHTML', false, newContent);
     } else if (o.newTag === 'align-all-left' || o.newTag === 'align-all-center' || o.newTag === 'align-all-right' || o.newTag === 'align-all-justify') {
-        console.log(o.contentLen, o.textOverallLen);
-        if (o.contentLen === o.textOverallLen) {
-            const preSelectors = document.querySelectorAll('pre');
+        const alignments = ['align-all-left', 'align-all-center', 'align-all-right', 'align-all-justify'];
 
-            preSelectors.forEach((pre) => {
-                pre.className = '';
-                pre.classList.add(o.newTag);
-            });
-        } else {
-            o.nodeParent.closest('pre').className = '';
-            o.nodeParent.closest('pre').classList.add(o.newTag);
-        }
-    } else if (o.tagGrandestParent === 'div' && o.tagGrandParent === 'main' && o.tagParent === 'section' && o.tag === 'pre') {
-        // mostly the o.tag here is 'div', it means the text/s has no tags yet
+        alignments.forEach((a) => {
+            o.target.classList.remove(a.toString());
+        });
+
+        o.target.classList.add(o.newTag);
+
+        console.log(o.newTag);
+    } else if (o.tagGrandParent === 'div' && o.tagParent === 'main' && o.tag === 'section') {
+        // mostly the o.tag here is 'section', it means the text/s has no tags yet
         // basing on the pattern mentioned above, it should be
         // grandParent then parent then tag, so div would always be first tag
         newContent = `<${o.newTag}>${o.content}</${o.newTag}>`;
 
         // replace the selected texts with its corresponding tags
-        document.execCommand('delete', false, null);
         document.execCommand('insertHTML', false, newContent);
-        // o.nodeParent.closest('pre').innerHTML += newContent;
     }
-}
-
-
-function textSelExecBold(o) {
-    let newContent;
-
-    // create a range
-    const range = rangeAtIndex(o.target, o.rangeStart, o.rangeEnd);
-
-    // set the range
-    const sel = document.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
-
-    // if (o.tag === 'b') {
-    //     newContent = `${o.content}`;
-    //
-    //     // replace the selected texts
-    //     document.execCommand('insertHTML', false, newContent);
-    // } else {
-    //     newContent = `<b>${o.content}</b>`;
-    //
-    //     // replace the selected texts
-    //     document.execCommand('insertHTML', false, newContent);
-    // }
-    o.tag.closest(strong);
-}
-
-function textSelExecAlign(o) {
-    // create a range
-    const range = rangeAtIndex(o.target, o.rangeStart, o.rangeEnd);
-
-    // set the range
-    const sel = document.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
-
-    document.execCommand(o.newTag, false, null);
 }
 
 function validateSelStr(tests, subject, passStat) {
@@ -358,57 +319,21 @@ function downloader(filename, data) {
     document.body.removeChild(target);
 }
 
-// snippet by Stefan Steiger
-// https://stackoverflow.com/questions/17278770/how-do-i-detect-chromium-specifically-vs-chrome
-function isChromium() {
-    for (let i = 0, u = 'Chromium', l = u.length; i < navigator.plugins.length; i++) {
-        if (navigator.plugins[i].name != null && navigator.plugins[i].name.substr(0, l) === u) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
 // snippet by Xeoncross, but modified it a bit
 // https://jsfiddle.net/Xeoncross/4tUDk/
-function putContentAtCaret(content, rangeStart) {
-    let range, sel;
+function putContentAtCaret(content, range) {
+    // Range.createContextualFragment() would be useful here but is
+    // non-standard and not supported in all browsers (IE9, for one)
+    const el = document.createElement('div');
+    el.innerHTML = content;
+    const frag = document.createDocumentFragment();
+    let node;
+    let lastNode;
 
-    if (window.getSelection) {
-        // IE9 and non-IE
-        sel = window.getSelection();
-
-        if (sel.getRangeAt && sel.rangeCount) {
-            range = sel.getRangeAt(0);
-            range.deleteContents();
-
-            // Range.createContextualFragment() would be useful here but is
-            // non-standard and not supported in all browsers (IE9, for one)
-            const el = document.createElement('div');
-            el.innerHTML = content;
-            const frag = document.createDocumentFragment();
-            let node;
-            let lastNode;
-
-            while ((node = el.firstChild)) {
-                lastNode = frag.appendChild(node);
-            }
-            range.insertNode(frag);
-
-            // Preserve the selection
-            if (lastNode) {
-                range = range.cloneRange();
-                range.setStartAfter(lastNode);
-                range.collapse(true);
-                sel.removeAllRanges();
-                sel.addRange(range);
-            }
-        }
-    } else if (document.selection && document.selection.type !== 'Control') {
-        // IE < 9
-        document.selection.createRange().pasteHTML(content);
+    while ((node = el.firstChild)) {
+        lastNode = frag.appendChild(node);
     }
+    range.insertNode(frag);
 }
 
 // snippet by TooTallNate,
@@ -561,11 +486,9 @@ export {
     disableMenuButtons,
     proRanger,
     textSelExecFontStyle,
-    textSelExecBold,
     validateSelStr,
     modalShow,
     modalShowMod,
     downloader,
-    textSelExecAlign,
     validateSelStrIfNot,
 };

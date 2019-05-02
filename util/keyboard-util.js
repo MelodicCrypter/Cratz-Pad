@@ -68,7 +68,7 @@ function checkWhichKey(event) {
     }
 
     // If 1 was pressed
-    if (event.which === 1) {
+    if (event.which === 49) {
         key = '1';
     }
 
@@ -80,6 +80,11 @@ function checkWhichKey(event) {
     // If 3 was pressed
     if (event.which === 51) {
         key = '3';
+    }
+
+    // If 4 was pressed
+    if (event.which === 52) {
+        key = '4';
     }
 
     return key;
