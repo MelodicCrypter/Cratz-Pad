@@ -362,6 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // const yes = commands.includes(uniqueTag);
 
         if (isElectron()) {
+            console.log('isElection: true');
             winSel.selectedTextsLen += 1;
         }
 

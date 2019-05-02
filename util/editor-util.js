@@ -211,6 +211,7 @@ function textSelExecFontStyle(o) {
         // replace the selected texts
         document.execCommand('insertHTML', false, newContent);
     } else if (o.newTag === 'align-all-left' || o.newTag === 'align-all-center' || o.newTag === 'align-all-right' || o.newTag === 'align-all-justify') {
+        console.log(o.contentLen, o.textOverallLen);
         if (o.contentLen === o.textOverallLen) {
             const preSelectors = document.querySelectorAll('pre');
 
