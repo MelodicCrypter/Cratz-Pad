@@ -48,7 +48,7 @@ app.listen(port, () => {
     // Browser-Refresh
     // Comment this out before building for Production
     // This is only for development, to auto refresh the browser
-    if (process.send) {
-        process.send('online');
-    }
+    // if (process.send) {
+    //     process.send('online');
+    // }
 });
