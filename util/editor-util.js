@@ -211,18 +211,7 @@ function textSelExecFontStyle(o) {
         // replace the selected texts
         document.execCommand('insertHTML', false, newContent);
     } else if (o.newTag === 'align-all-left' || o.newTag === 'align-all-center' || o.newTag === 'align-all-right' || o.newTag === 'align-all-justify') {
-        let contentLength;
-        const textOverallLength = o.textOverallLen;
-
-        if (isChromium()) {
-            console.log('chromium');
-            contentLength = o.contentLen + 1;
-        } else {
-            console.log('not chromium');
-            contentLength = o.contentLen;
-        }
-
-        if (contentLength === textOverallLength) {
+        if (o.contentLen === o.textOverallLen) {
             const preSelectors = document.querySelectorAll('pre');
 
             preSelectors.forEach((pre) => {

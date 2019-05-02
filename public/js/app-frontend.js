@@ -19,6 +19,7 @@ import EmojiPicker from 'rm-emoji-picker';
 import { saveAs } from 'file-saver';
 import emojiCheck from '../../node_modules/emoji-aware';
 import is from '../../node_modules/is_js/is.min';
+import isElectron from 'is-electron';
 import '../../node_modules/bootstrap/dist/js/bootstrap.bundle';
 
 // Assets or Files
@@ -359,6 +360,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // const commands = ['italic', 'underline', 'justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'];
         //
         // const yes = commands.includes(uniqueTag);
+
+        if (isElectron()) {
+            winSel.selectedTextsLen += 1;
+        }
 
         // 3. Setup the options for process B button
         const options = {
