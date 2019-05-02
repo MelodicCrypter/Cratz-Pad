@@ -357,13 +357,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // 2. Assign the tag whether 'strong', 'em', or 'u'
         const uniqueTag = $(this).attr('data-unique-tag');
 
-        // const commands = ['italic', 'underline', 'justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'];
-        //
-        // const yes = commands.includes(uniqueTag);
 
-        if (isElectron()) {
-            console.log('isElection: true');
-            winSel.selectedTextsLen += 1;
+        let contentFinalLen = winSel.selectedTextsLen;
+        if (!is.chrome() || !is.firefox()) {
+            console.log('not chrome nor firefox: true');
+            contentFinalLen = winSel.selectedTextsLen + 1;
         }
 
         // 3. Setup the options for process B button
@@ -372,7 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
             rangeEnd,
             target: textarea,
             content: winSel.selectedTexts,
-            contentLen: winSel.selectedTextsLen,
+            contentLen: contentFinalLen,
             textOverallLen: textCount,
             tag: winSel.textNodeVal,
             tagParent: winSel.textNodeParentVal,
