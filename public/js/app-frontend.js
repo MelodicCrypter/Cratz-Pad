@@ -376,8 +376,6 @@ document.addEventListener('DOMContentLoaded', () => {
             newTag: uniqueTag,
         };
 
-        console.log(options.textOverallLen, options.contentLen);
-
         window.document.designMode = 'On';
 
         TextareaEditor.textSelExecFontStyle(options);
