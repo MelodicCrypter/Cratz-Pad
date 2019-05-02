@@ -211,8 +211,8 @@ function textSelExecFontStyle(o) {
         // replace the selected texts
         document.execCommand('insertHTML', false, newContent);
     } else if (o.newTag === 'align-all-left' || o.newTag === 'align-all-center' || o.newTag === 'align-all-right' || o.newTag === 'align-all-justify') {
-        console.log(o.contentLen, o.textOverallLen);
-        if (o.contentLen === o.textOverallLen) {
+        console.log(o.contentLen + 1, o.textOverallLen);
+        if (o.contentLen + 1 === o.textOverallLen) {
             const preSelectors = document.querySelectorAll('pre');
 
             preSelectors.forEach((pre) => {
@@ -232,7 +232,7 @@ function textSelExecFontStyle(o) {
         // replace the selected texts with its corresponding tags
         document.execCommand('delete', false, null);
         document.execCommand('insertHTML', false, newContent);
-       // o.nodeParent.closest('pre').innerHTML += newContent;
+        // o.nodeParent.closest('pre').innerHTML += newContent;
     }
 }
 
