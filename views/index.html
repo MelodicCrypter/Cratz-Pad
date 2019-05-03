@@ -15,7 +15,7 @@ ${header}
     </header>
 
     <main id="main-box" role="main" class="inner cover">
-      <section contenteditable="true" id="textarea" class="col-lg-12 editor" placeholder="" spellcheck="true" autofocus>God is amazing and good! <strong><em><u>God indeed</u></em></strong> test <em>good</em> amazing <u>hugh</u> strong <strong><em>yahoo!</em></strong></section>
+      <section contenteditable="true" id="textarea" class="col-lg-12 editor" placeholder="" spellcheck="true" autofocus>God is amazing and good! <strong><em><u>God indeed</u></em></strong> test <em>good</em> amazing <u>hugh</u> strong <strong><em>yahoo!</em></strong> </section>
       <span id="emoji-button"></span>
     </main>
 
@@ -72,7 +72,7 @@ ${header}
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLongTitle"><img id="appLogoModal" src=""></h5>
+          <h5 class="modal-title" id="exampleModalLongTitle1"><img id="appLogoModal" src=""></h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -89,18 +89,19 @@ ${header}
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLongTitle"><img id="appLogoDownloadModal" src=""></h5>
+          <h5 class="modal-title" id="exampleModalLongTitle2"><img id="appLogoDownloadModal" src=""></h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
           <div class="input-group mb-3">
-            <input id="download-filename" type="text" class="form-control" placeholder="Type Your Filename Here" aria-label="Filename">
+            <input id="download-filename-input" name="download-filename" type="text" class="form-control" placeholder="Type Your Filename Here" aria-label="Filename">
             <div class="input-group-append">
-              <button id="download-filename-btn" class="btn btn-outline-secondary" type="button">Save</button>
+              <button id="download-filename-btn" class="btn btn-outline-success" type="button" disabled>Save</button>
             </div>
           </div>
+          <span style="display: none;" id="download-filename-error"></span>
         </div>
       </div>
     </div>

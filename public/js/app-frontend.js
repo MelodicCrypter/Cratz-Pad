@@ -83,7 +83,7 @@ $(window).on('load', () => {
         if (is.chrome()) {
             $('#main-container').show();
             $('#loader').detach(); // detach the loader element from the DOM
-            Caret.putCursorAtEnd(document.getElementById('textarea').lastChild); // focus on the contenteditable
+            Caret.putCursorAtEnd(document.getElementById('textarea')); // focus on the contenteditable
         }
     }, 2000);
 });
@@ -107,14 +107,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const textareaSelector = document.querySelector('[contenteditable]');
     const textareaEditor = document.getElementsByClassName('editor');
     const textareaJQuery = $('section[contenteditable="true"]');
+    const downloadFilenameInput = $('input[name="download-filename"]');
 
     // ::::The class for the bottom menus
     const menuButtons = $('.bott-nav');
 
     // ::::The modals
     const modalTarget = $('#modalAlert');
-    const modalBody = $('.modal .modal-body');
-    const modalDialog = $('.modal-dialog');
+    const modalDownload = $('#modalDownload');
 
     // ::::The Cratz Pad - EmojiPicker settings
     const cratzPad = new EmojiPicker({
@@ -180,6 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let rangeEnd; // will hold the end of the selected range
     let textCount;
     let textPreTagCount;
+    let userFinalFilename;
 
     textarea.addEventListener('focus', () => {
         textCount = textarea.innerText.length;
@@ -256,6 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========> When 'Auto Copy All' is clicked
     $('#auto-copy-all').on('click', (e) => {
         e.preventDefault();
+        e.stopPropagation();
 
         // 1. Set focus on the conteneditable 'textarea'
         textareaJQuery.focus();
@@ -274,47 +276,55 @@ document.addEventListener('DOMContentLoaded', () => {
             window.getSelection().removeAllRanges();
 
             // 3.3. Show modal alert telling that all texts were copied
-            TextareaEditor.modalShow(modalTarget, modalBody, '😊 Everything was copied. Paste the data somewhere.');
+            TextareaEditor.modalShow(modalTarget, '😊 Everything was copied. Paste the data somewhere.');
         } else {
             // 3.1 If fails, show modal alert
-            TextareaEditor.modalShow(modalTarget, modalBody, 'The area is empty. Please double check. 😊');
+            TextareaEditor.modalShow(modalTarget, 'The area is empty. Please double check. 😊');
         }
     });
 
     // =========> When 'Download Button' is clicked
     $('#download-btn').on('click', (e) => {
         e.preventDefault();
+        e.stopPropagation();
 
-        $('#modalDownload').modal('show');
+        modalDownload.modal('show');
 
-        // // 1. Set focus on the conteneditable 'textarea'
-        // textareaJQuery.focus();
-        //
-        // // 2. Select all inside the textarea
-        // document.execCommand('selectAll', false, null);
-        //
-        // // 3. Get the selection
-        // const datatext = window.getSelection();
-        //
-        // // 4. Create a new Blob
-        // const blob = new Blob([datatext], { type: 'text/plain;charset=utf-8' });
-        //
-        // // 5. Create file name and a random number for the filename
-        // const randomNum = Math.floor(Math.random() * 90000) + 10000;
-        // const filename = `Cratz-Pad-${randomNum}.txt`;
-        //
-        // // 6. Save the file using file-save js
-        // saveAs(blob, filename);
-        //
-        // // 7. Remove all ranges
-        // window.getSelection().removeAllRanges();
+        $('#download-filename-btn').on('click', (ev) => {
+            ev.preventDefault();
+
+            // 1. Set focus on the conteneditable 'textarea'
+            textareaJQuery.focus();
+
+            // 2. Select all inside the textarea
+            document.execCommand('selectAll', false, null);
+
+            // 3. Get the selection
+            const datatext = window.getSelection();
+
+            // 4. Create a new Blob
+            const blob = new Blob([datatext], { type: 'text/plain;charset=utf-8' });
+
+            // 5. Create file name and a random number for the filename
+            // const randomNum = Math.floor(Math.random() * 90000) + 10000;
+            // const filename = `Cratz-Pad-${randomNum}.txt`;
+
+            // 6. Save the file using file-save js
+            saveAs(blob, `${userFinalFilename}.txt`);
+
+            modalDownload.modal('hide');
+
+            window.getSelection().removeAllRanges();
+
+            textarea.focus();
+        });
     });
 
     // =========> When 'About' is clicked
     $('#about-app').on('click', (e) => {
         e.preventDefault();
 
-        TextareaEditor.modalShowMod(modalTarget, modalDialog, modalBody, `${''
+        TextareaEditor.modalShowMod(modalTarget, `${''
             + '<strong>Name:</strong> Cratz Pad'
             + '<br><br>'
             + '<strong>Version:</strong> 1.0.0'
@@ -333,7 +343,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // =========> When B or I or U buttons are clicked
-    $('#edit-bold, #edit-italic, #edit-underline, #edit-left, #edit-center, #edit-right, #edit-justify').on('click', function (e) {
+    $('#edit-bold, #edit-italic, #edit-underline').on('click', function (e) {
         // 1. Double check everything, if only texts were selected
         // no need to worry if it contains emojis cause it has been taken care of above
         const tests = ['undefined', 'emptyString'];
@@ -378,6 +388,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         textarea.focus();
 
+        window.getSelection().removeAllRanges();
+
         // 4. Disable menu buttons
         TextareaEditor.disableMenuButtons(menuButtons);
     });
@@ -399,8 +411,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
         textarea.focus();
 
+        window.getSelection().removeAllRanges();
+
         // 4. Disable menu buttons
         TextareaEditor.disableMenuButtons(menuButtons);
+    });
+
+    // ==============================================================================
+    // Listening for keydown events for Download Input
+    // ==============================================================================
+    downloadFilenameInput.keyup(function (e) {
+        const filterCharacters = /^[0-9a-zA-Z-]+$/;
+
+        if ($(this).val().match(filterCharacters)) {
+            $('#download-filename-btn').removeAttr('disabled');
+            $('#download-filename-error').hide();
+
+            const filename = $(this).val().trim();
+            userFinalFilename = filename.replace(/[^a-zA-Z0-9-]/g, '');
+        } else {
+            $('#download-filename-btn').attr('disabled', true);
+            $('#download-filename-error')
+                .show()
+                .text('Only AlphaNumeric. No special characters: .,!@#$%^&*(*) etc.');
+        }
     });
 
     // ==============================================================================
@@ -466,15 +500,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     textarea.focus();
 
+                    window.getSelection().removeAllRanges();
+
                     // 3.1.8 Disable menu buttons
                     TextareaEditor.disableMenuButtons(menuButtons);
                 } else {
                     // 3.1.6 If selected texts contains some emjois then show modal alert
-                    TextareaEditor.modalShow(modalTarget, modalBody, "😔 Emojis doesn't look great when styled. Text only please.");
+                    TextareaEditor.modalShow(modalTarget, "😔 Emojis doesn't look great when styled. Text only please.");
                 }
             } else {
                 // if Hot-Keys are disabled
-                TextareaEditor.modalShow(modalTarget, modalBody, 'Hot-Keys are disabled. Enable it again by clicking 👍 button');
+                TextareaEditor.modalShow(modalTarget, 'Hot-Keys are disabled. Enable it again by clicking 👍 button');
             }
         }
 
@@ -509,10 +545,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 textarea.focus();
 
+                window.getSelection().removeAllRanges();
+
                 // 3.1.8 Disable menu buttons
                 TextareaEditor.disableMenuButtons(menuButtons);
             } else {
-                TextareaEditor.modalShow(modalTarget, modalBody, 'Hot-Keys are disabled. Enable it again by clicking 👍 button');
+                TextareaEditor.modalShow(modalTarget, 'Hot-Keys are disabled. Enable it again by clicking 👍 button');
             }
         }
 

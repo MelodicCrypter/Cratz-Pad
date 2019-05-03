@@ -222,8 +222,6 @@ function textSelExecFontStyle(o) {
         });
 
         o.target.classList.add(o.newTag);
-
-        console.log(o.newTag);
     } else if (o.tagGrandParent === 'div' && o.tagParent === 'main' && o.tag === 'section') {
         // mostly the o.tag here is 'section', it means the text/s has no tags yet
         // basing on the pattern mentioned above, it should be
@@ -292,20 +290,20 @@ function validateSelStrIfNot(tests, subject, passStat) {
     return false;
 }
 
-function modalShowMod(targetModal, targetParent, modalBody, textMsg) {
-    targetParent.addClass('modal-lg');
-    modalBody.addClass('modal-modified');
-    modalBody.html(textMsg);
+function modalShowMod(targetModal, textMsg) {
+    targetModal.find('.modal-dialog').addClass('modal-lg');
+    targetModal.find('.modal-body').addClass('modal-modified');
+    targetModal.find('.modal-body').html(textMsg);
     targetModal.modal('show');
 
     targetModal.on('hidden.bs.modal', (e) => {
-        targetParent.removeClass('modal-lg');
-        modalBody.removeClass('modal-modified');
+        targetModal.find('.modal-dialog').removeClass('modal-lg');
+        targetModal.find('.modal-body').removeClass('modal-modified');
     });
 }
 
-function modalShow(targetModal, modalBody, textMsg) {
-    modalBody.text(textMsg);
+function modalShow(targetModal, textMsg) {
+    targetModal.find('.modal-body').text(textMsg);
     targetModal.modal('show');
 }
 

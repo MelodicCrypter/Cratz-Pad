@@ -16,12 +16,14 @@
 // Public Assets
 $bgImg : '../../public/img/testimg.jpg';
 
-
 input:focus,
 select:focus,
 textarea:focus,
-button:focus {
-  outline: none;
+button:focus,
+.form-control:focus {
+  outline: none !important;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
 }
 a,
 a:focus,
@@ -461,5 +463,10 @@ header {
     a {
       color: #686a6b !important;
     }
+  }
+
+  #download-filename-error {
+      color: #c70b0b;
+      font-size: .8em;
   }
 }
