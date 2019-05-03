@@ -187,18 +187,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let textPreTagCount;
     let userFinalFilename;
 
-    textarea.addEventListener('focus', () => {
-        textCount = textarea.innerText.length;
-        textPreTagCount = textarea.firstElementChild.textContent.length;
-    });
-
     // ========> Listen for any texts selection
     // This event is very vital cause in this section, selectedTexts, caretPosition, and textState will be set
     textareaJQuery.bind('mouseup keyup mousedown touchend', (e) => {
-        textCount = textarea.innerText.length;
-        textPreTagCount = textarea.firstElementChild.textContent.length;
-
-
         // 1. Disable double click for selecting texts
         if (e.detail > 1) {
             e.preventDefault();
