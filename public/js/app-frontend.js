@@ -20,9 +20,7 @@ import EmojiPicker from 'rm-emoji-picker';
 import { saveAs } from 'file-saver';
 import emojiCheck from '../../node_modules/emoji-aware';
 import is from '../../node_modules/is_js/is.min';
-import isElectron from 'is-electron';
 import '../../node_modules/bootstrap/dist/js/bootstrap.bundle';
-import '../../node_modules/bootstrap-toggle/js/bootstrap2-toggle';
 
 // Assets or Files
 import peopleLogo from '../img/neutral_decision.svg';
