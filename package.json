@@ -25,6 +25,7 @@
     "@fortawesome/fontawesome-free": "^5.8.1",
     "bcryptjs": "^2.4.3",
     "bootstrap": "^4.3.1",
+    "bootstrap-toggle": "^2.2.2",
     "cors": "^2.8.5",
     "custom-env": "^1.0.0",
     "emoji-aware": "^3.0.4",

@@ -12,6 +12,7 @@
 
 // Styles: SCSS or CSS
 import '../styles/app-main.scss';
+import '../styles/aanjulena-sweet-toggle/custom-switch-toggle.scss';
 
 // Library Modules
 import $ from 'jquery';
@@ -21,6 +22,7 @@ import emojiCheck from '../../node_modules/emoji-aware';
 import is from '../../node_modules/is_js/is.min';
 import isElectron from 'is-electron';
 import '../../node_modules/bootstrap/dist/js/bootstrap.bundle';
+import '../../node_modules/bootstrap-toggle/js/bootstrap2-toggle';
 
 // Assets or Files
 import peopleLogo from '../img/neutral_decision.svg';
@@ -62,6 +64,11 @@ logoImgDownloadBox.src = appLogoPath;
 // 5. Load loader image
 const loaderImgTag = document.getElementById('loader-img');
 loaderImgTag.src = loaderImgPath;
+// 6. Set desktop platform logos
+const loaderWindowsImg = document.getElementById('loader-windows-img');
+loaderWindowsImg.src = windowsLogoPath;
+const loaderMacImg = document.getElementById('loader-mac-img');
+loaderMacImg.src = appleLogoPath;
 
 // ================================================================================
 // onLOAD: Hide loader and show the main container
@@ -619,10 +626,34 @@ document.addEventListener('DOMContentLoaded', () => {
     // Theme Buttons : this will allow user to set the app's theme
     // ==============================================================================
     // ======> Day
-    $('#day-theme').on('click', ButtonsEditor.themeToggle($(this)));
-    // ======> Night
-    $('#night-theme').on('click', () => {
-        $('body').css({ 'background-color': '#333' });
+    $('#mode-button').click(function () {
+        const status = $(this).attr('aria-pressed');
+
+        if (status === 'false') {
+            // ON
+            $(this).css({background: 'red !important'});
+            console.log('on');
+            $('#textarea').css(
+                {
+                    background: '#333 !important',
+                    'background-color': '#333 !important',
+                    'text-shadow': '0 0.05rem 0.1rem rgba(0, 0, 0, 0.5) !important',
+                },
+            );
+        }
+
+        if (status === 'true') {
+            // OFF
+            $(this).css({background: 'pink !important'});
+            console.log('off');
+            $('#textarea').css(
+                {
+                    background: '#fff !important',
+                    'background-color': '#fff !important',
+                    'text-shadow': 'none !important',
+                },
+            );
+        }
     });
 
     // ===============================================================================
