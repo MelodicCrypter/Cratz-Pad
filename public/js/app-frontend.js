@@ -665,13 +665,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // =====> ToolTip
     $('.nav-link').tooltip();
 
+    // ===============================================================================
+    // Local Storage
+    // ==============================================================================
+    // =====> Save locally if window if reloaded or closed
     $(window).bind('beforeunload', () => {
         ls.clear();
 
         const allData = textareaJQuery.html();
 
-        // Save texts here to local storage
-        ls.set('allData', allData);
+        if (allData !== '') {
+            // Save texts here to local storage
+            ls.set('allData', allData);
+        }
 
         return '...';
     });
