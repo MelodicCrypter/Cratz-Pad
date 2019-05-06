@@ -20,6 +20,7 @@ import EmojiPicker from 'rm-emoji-picker';
 import { saveAs } from 'file-saver';
 import emojiCheck from '../../node_modules/emoji-aware';
 import is from '../../node_modules/is_js/is.min';
+import Cookies from '../../node_modules/js-cookie';
 import '../../node_modules/bootstrap/dist/js/bootstrap.bundle';
 
 // Assets or Files
@@ -89,6 +90,21 @@ $(window).on('load', () => {
             $('#main-container').show();
             $('#loader').detach(); // detach the loader element from the DOM
             Caret.putCursorAtEnd(document.getElementById('textarea')); // focus on the contenteditable
+        }
+
+        // 2. Check and set DARK MODE
+        if (Cookies.get('darkmode') === undefined && Cookies.get('lightmode') === undefined) {
+            // User did not set the mode, so default is ON
+        } else if (Cookies.get('darkmode') === 'on') {
+            // DARK MODE is ON
+            $('body').removeClass('mode-lightmode');
+            $('#mode-button').attr('aria-pressed', 'true');
+            $('#mode-button').addClass('active');
+        } else if (Cookies.get('lightmode') === 'on') {
+            // DARK MODE is OFF
+            $('body').addClass('mode-lightmode');
+            $('#mode-button').attr('aria-pressed', 'false');
+            $('#mode-button').removeClass('active');
         }
     }, 2000);
 });
@@ -619,32 +635,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const status = $(this).attr('aria-pressed');
 
         if (status === 'false') {
-            // ON
-            // $('body').css({ background: 'red !important' });
-            // console.log('on');
-            // $('#textarea').css(
-            //     {
-            //         background: '#333 !important',
-            //         'background-color': '#333 !important',
-            //         'text-shadow': '0 0.05rem 0.1rem rgba(0, 0, 0, 0.5) !important',
-            //     },
-            // );
+            // DARK MODE is ON
             $('body').removeClass('mode-lightmode');
+
+            Cookies.remove('lightmode');
+            Cookies.set('darkmode', 'on', { expires: 30 });
         }
 
         if (status === 'true') {
-            // OFF
-            // $('body').css({ background: 'pink !important' });
-            // console.log('off');
-            // $('#textarea').css(
-            //     {
-            //         background: '#fff !important',
-            //         'background-color': '#fff !important',
-            //         'text-shadow': 'none !important',
-            //     },
-            // );
-
+            // DARK MODE is OFF
             $('body').addClass('mode-lightmode');
+
+            Cookies.remove('darkmode');
+            Cookies.set('lightmode', 'on', { expires: 30 });
         }
     });
 
