@@ -628,13 +628,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // }
     }, false);
 
-    // Todo
-    // create shortcut for text-aligns
-    // fix enable/disable hot-keys
-    // themes
-    // EVENT LISTENER FOR CLOSING THE WINDOW or Tab ==============
-    // refactor if have time
-
     // ==============================================================================
     // Theme Buttons : this will allow user to set the app's theme
     // ==============================================================================
