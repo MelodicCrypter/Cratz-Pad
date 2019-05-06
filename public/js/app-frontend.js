@@ -208,7 +208,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let rangeStart; // will hold the start of the selected range
     let rangeEnd; // will hold the end of the selected range
     let textCount;
-    let textPreTagCount;
     let userFinalFilename;
 
     // ========> Listen for any texts selection
@@ -378,7 +377,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // 2. Assign the tag whether 'strong', 'em', or 'u'
         const uniqueTag = $(this).attr('data-unique-tag');
 
-
         let contentFinalLen;
         if (is.chrome() || is.firefox()) {
             contentFinalLen = winSel.selectedTextsLen;
@@ -408,7 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         textarea.focus();
 
-        window.getSelection().removeAllRanges();
+        // window.getSelection().removeAllRanges();
 
         // 4. Disable menu buttons
         TextareaEditor.disableMenuButtons(menuButtons);
@@ -431,7 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         textarea.focus();
 
-        window.getSelection().removeAllRanges();
+        // window.getSelection().removeAllRanges();
 
         // 4. Disable menu buttons
         TextareaEditor.disableMenuButtons(menuButtons);
@@ -520,7 +518,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     textarea.focus();
 
-                    window.getSelection().removeAllRanges();
+                    // window.getSelection().removeAllRanges();
 
                     // 3.1.8 Disable menu buttons
                     TextareaEditor.disableMenuButtons(menuButtons);
@@ -565,7 +563,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 textarea.focus();
 
-                window.getSelection().removeAllRanges();
+                // window.getSelection().removeAllRanges();
 
                 // 3.1.8 Disable menu buttons
                 TextareaEditor.disableMenuButtons(menuButtons);
@@ -640,7 +638,7 @@ document.addEventListener('DOMContentLoaded', () => {
             $('body').removeClass('mode-lightmode');
 
             Cookies.remove('lightmode');
-            Cookies.set('darkmode', 'on', { expires: 30 });
+            Cookies.set('darkmode', 'on', { expires: 90 });
         }
 
         if (status === 'true') {
@@ -648,7 +646,7 @@ document.addEventListener('DOMContentLoaded', () => {
             $('body').addClass('mode-lightmode');
 
             Cookies.remove('darkmode');
-            Cookies.set('lightmode', 'on', { expires: 30 });
+            Cookies.set('lightmode', 'on', { expires: 90 });
         }
     });
 
@@ -659,19 +657,19 @@ document.addEventListener('DOMContentLoaded', () => {
     $('.nav-link').tooltip();
 
     // ===============================================================================
-    // Local Storage
+    // Local Storage: beforeunload and on blur
     // ==============================================================================
-    // =====> Save locally if window if reloaded or closed
+    // =====> Save locally if window if reloaded or closed, on mouse leave, focusout
     $(window).bind('beforeunload', () => {
-        ls.clear();
-
-        const allData = textareaJQuery.html();
-
-        if (allData !== '') {
-            // Save texts here to local storage
-            ls.set('allData', allData);
-        }
+        TextareaEditor.saveDataLocally('allData', textareaJQuery);
 
         return '...';
+    });
+    $(textareaJQuery).on('focusout', () => {
+        TextareaEditor.saveDataLocally('allData', textareaJQuery);
+    });
+    $(textareaJQuery).mouseleave(() => {
+        TextareaEditor.saveDataLocally('allData', textareaJQuery);
+        console.log('saved');
     });
 }, false);

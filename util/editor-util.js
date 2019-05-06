@@ -1,6 +1,6 @@
 // Utilities for the Editor
 
-import * as Caret from './caret-utils';
+import ls from 'local-storage';
 
 // Normalizer for jQuery objects, if prefer dom nodes
 function nodeNormalizer(target) {
@@ -317,6 +317,18 @@ function downloader(filename, data) {
     document.body.removeChild(target);
 }
 
+function saveDataLocally(name, target) {
+    ls.clear();
+
+    const allData = target.html();
+    const dataLength = target.text().length;
+
+    if (dataLength > 0) {
+        // Save texts here to local storage
+        ls.set(name, allData);
+    }
+}
+
 // snippet by Xeoncross, but modified it a bit
 // https://jsfiddle.net/Xeoncross/4tUDk/
 function putContentAtCaret(content, range) {
@@ -487,6 +499,7 @@ export {
     validateSelStr,
     modalShow,
     modalShowMod,
+    saveDataLocally,
     downloader,
     validateSelStrIfNot,
 };
