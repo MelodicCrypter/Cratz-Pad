@@ -614,34 +614,37 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==============================================================================
     // Theme Buttons : this will allow user to set the app's theme
     // ==============================================================================
-    // ======> Day
+    // ======> Default is Dark Mode
     $('#mode-button').click(function () {
         const status = $(this).attr('aria-pressed');
 
         if (status === 'false') {
             // ON
-            $(this).css({background: 'red !important'});
-            console.log('on');
-            $('#textarea').css(
-                {
-                    background: '#333 !important',
-                    'background-color': '#333 !important',
-                    'text-shadow': '0 0.05rem 0.1rem rgba(0, 0, 0, 0.5) !important',
-                },
-            );
+            // $('body').css({ background: 'red !important' });
+            // console.log('on');
+            // $('#textarea').css(
+            //     {
+            //         background: '#333 !important',
+            //         'background-color': '#333 !important',
+            //         'text-shadow': '0 0.05rem 0.1rem rgba(0, 0, 0, 0.5) !important',
+            //     },
+            // );
+            $('body').removeClass('mode-lightmode');
         }
 
         if (status === 'true') {
             // OFF
-            $(this).css({background: 'pink !important'});
-            console.log('off');
-            $('#textarea').css(
-                {
-                    background: '#fff !important',
-                    'background-color': '#fff !important',
-                    'text-shadow': 'none !important',
-                },
-            );
+            // $('body').css({ background: 'pink !important' });
+            // console.log('off');
+            // $('#textarea').css(
+            //     {
+            //         background: '#fff !important',
+            //         'background-color': '#fff !important',
+            //         'text-shadow': 'none !important',
+            //     },
+            // );
+
+            $('body').addClass('mode-lightmode');
         }
     });
 
