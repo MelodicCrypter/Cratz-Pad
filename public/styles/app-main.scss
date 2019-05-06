@@ -503,13 +503,20 @@ header {
     }
   }
 
+  #footer-nav {
+    .icons {
+      color: #99ccc8 !important;
+      text-shadow: none !important;
+    }
+
+    .divider {
+      color: #fbeec7 !important;
+      text-shadow: none !important;
+    }
+  }
+
   header,
   footer #footer-nav {
     background-color: #fff !important;
-  }
-
-  #footer-nav .divider {
-    color: #fbeec7 !important;
-    text-shadow: none !important;
   }
 }

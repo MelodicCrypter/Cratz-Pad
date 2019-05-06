@@ -21,6 +21,7 @@ import { saveAs } from 'file-saver';
 import emojiCheck from '../../node_modules/emoji-aware';
 import is from '../../node_modules/is_js/is.min';
 import Cookies from '../../node_modules/js-cookie';
+import ls from '../../node_modules/local-storage';
 import '../../node_modules/bootstrap/dist/js/bootstrap.bundle';
 
 // Assets or Files
@@ -75,36 +76,43 @@ loaderMacImg.src = appleLogoPath;
 $(window).on('load', () => {
     // 1. Show main after 2 seconds
     setTimeout(() => {
-        // 2. Hide now the loader
+        // 1.2 Hide now the loader
         $('#loader').hide();
 
-        // 3. Determine if not Chrome, cause this app was designed to work perfectly
+        // 1.3 Determine if not Chrome, cause this app was designed to work perfectly
         // inside Chrome engine, if not Chrome, show the message
         if (is.firefox() || is.safari() || is.edge() || is.opera() || is.ie()) {
             $('#notChromeMsg').show();
             $('#main-container').remove();
         }
 
-        // 3.1 If Chrome, show main
+        // 1.4 If Chrome, show main
         if (is.chrome()) {
             $('#main-container').show();
             $('#loader').detach(); // detach the loader element from the DOM
-            Caret.putCursorAtEnd(document.getElementById('textarea')); // focus on the contenteditable
-        }
 
-        // 2. Check and set DARK MODE
-        if (Cookies.get('darkmode') === undefined && Cookies.get('lightmode') === undefined) {
-            // User did not set the mode, so default is ON
-        } else if (Cookies.get('darkmode') === 'on') {
-            // DARK MODE is ON
-            $('body').removeClass('mode-lightmode');
-            $('#mode-button').attr('aria-pressed', 'true');
-            $('#mode-button').addClass('active');
-        } else if (Cookies.get('lightmode') === 'on') {
-            // DARK MODE is OFF
-            $('body').addClass('mode-lightmode');
-            $('#mode-button').attr('aria-pressed', 'false');
-            $('#mode-button').removeClass('active');
+            // 1.4.1 Check and set DARK MODE
+            if (Cookies.get('darkmode') === undefined && Cookies.get('lightmode') === undefined) {
+                // User did not set the mode, so default is ON
+            } else if (Cookies.get('darkmode') === 'on') {
+                // DARK MODE is ON
+                $('body').removeClass('mode-lightmode');
+                $('#mode-button').attr('aria-pressed', 'true');
+                $('#mode-button').addClass('active');
+            } else if (Cookies.get('lightmode') === 'on') {
+                // DARK MODE is OFF
+                $('body').addClass('mode-lightmode');
+                $('#mode-button').attr('aria-pressed', 'false');
+                $('#mode-button').removeClass('active');
+            }
+
+            // 1.5
+            const receivedData = ls.get('allData');
+            if (receivedData !== null) {
+                $('section[contenteditable="true"]').html(receivedData);
+            }
+
+            Caret.putCursorAtEnd(document.getElementById('textarea')); // focus on the contenteditable
         }
     }, 2000);
 });
@@ -656,4 +664,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==============================================================================
     // =====> ToolTip
     $('.nav-link').tooltip();
+
+    $(window).bind('beforeunload', () => {
+        ls.clear();
+
+        const allData = textareaJQuery.html();
+
+        // Save texts here to local storage
+        ls.set('allData', allData);
+
+        return '...';
+    });
 }, false);
