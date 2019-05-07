@@ -327,8 +327,6 @@ function saveDataLocally(name, target) {
     const allData = target.html();
     const dataLength = target.text().length;
 
-    console.log(dataLength);
-
     if (dataLength > 0) {
         // Save texts here to local storage
         ls.set(name, allData);

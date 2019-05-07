@@ -25,11 +25,13 @@ button:focus,
   -webkit-box-shadow: none !important;
   box-shadow: none !important;
 }
+
 a,
 a:focus,
 a:hover {
   color: #fff;
 }
+
 .btn-secondary,
 .btn-secondary:hover,
 .btn-secondary:focus {
@@ -38,18 +40,24 @@ a:hover {
   background-color: #fff;
   border: .05rem solid #fff;
 }
-html {
+
+html,
+body {
   height: 100%;
-  background-color: #333 !important;
-  //background-color: #333 !important;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
 }
+
+html {
+  background-color: #333 !important;
+}
+
 body {
   display: -ms-flexbox;
   display: flex;
   color: #fff;
   background-color: #333 !important;
-  background: #333 !important;
-  text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
+  text-shadow: 0 0.05rem 0.1rem rgba(0, 0, 0, 0.5);
 
   strong,
   em,
@@ -111,12 +119,12 @@ body {
 
 #loader {
   position: relative;
-  top: 40vh !important;
+  top: 28vh !important;
   display: block !important;
   z-index: 9999 !important;
 
   #loader-img {
-    width: 100px;
+    width: 80px;
   }
 }
 
@@ -126,9 +134,8 @@ body {
   font-size: 1.5em;
   color: #bdbdbd;
   background: transparent;
-  padding: 2px;
   resize: none !important;
-  height: 82vh;
+  height: 77vh;
   max-height: 100vh;
   overflow: auto;
   white-space: pre-wrap !important;
@@ -518,11 +525,38 @@ header {
   }
 }
 
-@media (min-width: 48em) {
-  .masthead-brand {
-    float: left;
+#notChromeMsg {
+  li {
+    display: inline !important;
   }
-  .nav-masthead {
-    float: right;
+
+  .li-padder {
+    padding-left: 100px;
+  }
+}
+
+@media (max-width: 768px) {
+  #notChromeMsg {
+    width: 100% !important;
+
+    li {
+      display: block !important;
+    }
+
+    .li-padder {
+      padding-left: 0px !important;
+    }
+  }
+
+  #loader {
+    top: 8vh !important;
+  }
+
+  #loader-img {
+    width: 50px !important;
+  }
+
+  .modal-links img {
+    width: 28px !important;
   }
 }

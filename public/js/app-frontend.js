@@ -18,10 +18,10 @@ import '../styles/aanjulena-sweet-toggle/custom-switch-toggle.scss';
 import $ from 'jquery';
 import EmojiPicker from 'rm-emoji-picker';
 import { saveAs } from 'file-saver';
-import emojiCheck from '../../node_modules/emoji-aware';
-import is from '../../node_modules/is_js/is.min';
-import Cookies from '../../node_modules/js-cookie';
-import ls from '../../node_modules/local-storage';
+import emojiCheck from 'emoji-aware';
+import is from 'is_js';
+import Cookies from 'js-cookie';
+import ls from 'local-storage';
 import '../../node_modules/bootstrap/dist/js/bootstrap.bundle';
 
 // Assets or Files
@@ -220,10 +220,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // This event is very vital cause in this section, selectedTexts, caretPosition, and textState will be set
     textareaJQuery.bind('mouseup keyup mousedown touchend', (e) => {
         // 1. Disable double click for selecting texts
-        if (e.detail > 1) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
+        // if (e.detail > 1) {
+        //     e.preventDefault();
+        //     e.stopPropagation();
+        // }
 
         // 2. If there is a selection
         if (window.getSelection) {
