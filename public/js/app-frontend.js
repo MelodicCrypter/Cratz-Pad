@@ -87,7 +87,7 @@ $(window).on('load', () => {
         }
 
         // 1.4 If Chrome, show main
-        if (is.chrome()) {
+        if (is.chrome() || navigator.userAgent.match('CriOS')) {
             $('#main-container').show();
             $('#loader').detach(); // detach the loader element from the DOM
 
