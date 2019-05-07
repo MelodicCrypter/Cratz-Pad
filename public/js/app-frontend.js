@@ -81,13 +81,13 @@ $(window).on('load', () => {
 
         // 1.3 Determine if not Chrome, cause this app was designed to work perfectly
         // inside Chrome engine, if not Chrome, show the message
-        if (is.firefox() || is.safari() || is.edge() || is.opera() || is.ie()) {
+        if (is.firefox() || is.safari() || is.edge() || is.opera() || is.ie() || is.mobile()) {
             $('#notChromeMsg').show();
             $('#main-container').remove();
         }
 
-        // 1.4 If Chrome, show main
-        if (is.chrome() || navigator.userAgent.match('CriOS')) {
+        // 1.4 If Chrome and not mobile, show main
+        if (is.chrome() || navigator.userAgent.match('CriOS') && is.not.mobile()) {
             $('#main-container').show();
             $('#loader').detach(); // detach the loader element from the DOM
 
