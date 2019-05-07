@@ -90,14 +90,7 @@ body {
 .nav-masthead .nav-link:focus {
   border-bottom-color: rgba(255, 255, 255, .25);
 }
-@media (min-width: 48em) {
-    .masthead-brand {
-        float: left;
-    }
-    .nav-masthead {
-      float: right;
-    }
-}
+
 
 ::-webkit-scrollbar {
   width: 0px;
@@ -522,5 +515,14 @@ header {
   header,
   footer #footer-nav {
     background-color: #fff !important;
+  }
+}
+
+@media (min-width: 48em) {
+  .masthead-brand {
+    float: left;
+  }
+  .nav-masthead {
+    float: right;
   }
 }
