@@ -23,7 +23,6 @@ import is from 'is_js';
 import Cookies from 'js-cookie';
 import ls from 'local-storage';
 import LogRocket from 'logrocket';
-import process from 'process';
 import '../../node_modules/bootstrap/dist/js/bootstrap.bundle';
 
 // Assets or Files
@@ -51,7 +50,7 @@ import toggler from '../../util/toggler-util';
 // ==============================================================================
 // LogRocket: Initialize
 // ==============================================================================
-LogRocket.init(process.env.LOGROCKET_APP_ID);
+LogRocket.init(LOGROCKET_APP_ID);
 
 // ==============================================================================
 // Set up: Basic Settings before the DOM contents are loaded
