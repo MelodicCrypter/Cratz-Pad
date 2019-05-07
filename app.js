@@ -1,8 +1,6 @@
 // Local App Modules
 import './config/config';
 import homeRoute from './routes/home-route';
-import aboutRoute from './routes/about-route';
-import tenorRoute from './routes/tenor-route';
 import logger from './util/logger-util';
 
 // Library Modules
@@ -38,8 +36,6 @@ app.use(logger(`${logsPath}/app-logs.json`)); // Logs, using Winston & Express-W
 
 // Main routes using express.Router()
 app.use('/', homeRoute);
-app.use('/about', aboutRoute);
-app.use('/tenor', tenorRoute);
 
 // Ready
 app.listen(port, () => {
