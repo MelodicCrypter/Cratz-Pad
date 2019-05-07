@@ -222,6 +222,10 @@ function textSelExecFontStyle(o) {
         });
 
         o.target.classList.add(o.newTag);
+        o.target.focus();
+
+        ls.remove('textareaAlignment');
+        ls.set('textareaAlignment', o.newTag);
     } else if (o.tagGrandParent === 'div' && o.tagParent === 'main' && o.tag === 'section') {
         // mostly the o.tag here is 'section', it means the text/s has no tags yet
         // basing on the pattern mentioned above, it should be
@@ -318,10 +322,12 @@ function downloader(filename, data) {
 }
 
 function saveDataLocally(name, target) {
-    ls.clear();
+    ls.remove(name);
 
     const allData = target.html();
     const dataLength = target.text().length;
+
+    console.log(dataLength);
 
     if (dataLength > 0) {
         // Save texts here to local storage

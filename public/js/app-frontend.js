@@ -112,6 +112,12 @@ $(window).on('load', () => {
                 $('section[contenteditable="true"]').html(receivedData);
             }
 
+            // 1.6
+            const alignmentData = ls.get('textareaAlignment');
+            if (alignmentData !== null) {
+                $('section[contenteditable="true"]').addClass(alignmentData.toString());
+            }
+
             Caret.putCursorAtEnd(document.getElementById('textarea')); // focus on the contenteditable
         }
     }, 2000);
@@ -559,9 +565,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // 3.1.7 Start the process
                 TextareaEditor.textSelExecFontStyle(options);
 
-                Caret.setCaretPos(rangeStart);
-
-                textarea.focus();
+                Caret.putCursorAtEnd(textarea);
 
                 // window.getSelection().removeAllRanges();
 
@@ -670,6 +674,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     $(textareaJQuery).mouseleave(() => {
         TextareaEditor.saveDataLocally('allData', textareaJQuery);
-        console.log('saved');
     });
 }, false);
