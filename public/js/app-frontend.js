@@ -50,7 +50,7 @@ import toggler from '../../util/toggler-util';
 // ==============================================================================
 // LogRocket: Initialize
 // ==============================================================================
-LogRocket.init(LOGROCKET_APP_ID);
+LogRocket.init('zimys9/cratz-pad');
 
 // ==============================================================================
 // Set up: Basic Settings before the DOM contents are loaded
