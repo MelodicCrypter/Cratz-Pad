@@ -34,7 +34,7 @@
 //
 // `;
 
-const osxPlatform = `This is a <strong>test test test</strong>`;
+const osxPlatform = `This is a <strong>test test test</strong> dfsf sdaf dsf adf`;
 
 const windowsPlatform = `Hi <span class="emoji-outer emoji-sizer"><span class="emoji-inner" style="background: url(e904c72d38b31ba81d2dcbf311e7d695.png);background-position:25% 77.08333333333334%;background-size:4900%" data-codepoints="1f44b"></span></span>&#8203;
 
