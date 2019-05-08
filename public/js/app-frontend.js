@@ -102,7 +102,6 @@ $(window).on('load', () => {
 
             if (is.windows()) {
                 $('#textarea').html(intro.windowsPlatform);
-                console.log('WINDOWS');
             } else {
                 $('#textarea').html(intro.osxPlatform);
             }
@@ -685,8 +684,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // =====> Save locally if window if reloaded or closed, on mouse leave, focusout
     $(window).bind('beforeunload', () => {
         TextareaEditor.saveDataLocally('allData', textareaJQuery);
-
-        return '...';
     });
     $(textareaJQuery).on('focusout', () => {
         TextareaEditor.saveDataLocally('allData', textareaJQuery);
