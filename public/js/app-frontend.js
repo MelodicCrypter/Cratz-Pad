@@ -42,6 +42,7 @@ import appleLogoPath from '../img/apple-logo.png';
 import sheetApplePath from '../img/sheets/sheet_apple_64_indexed_128.png';
 import sheetGooglePath from '../img/sheets/sheet_google_64_indexed_128.png';
 import sheetTwitterPath from '../img/sheets/sheet_twitter_64_indexed_128.png';
+import * as intro from '../other/onload-intro';
 
 // Own Utility Modules
 import * as ButtonsEditor from '../../util/editor-buttons-utils';
@@ -100,12 +101,9 @@ $(window).on('load', () => {
             $('#main-container').show();
 
             if (is.windows()) {
-                $('.windows-textarea').show();
-                $('.osx-textarea').remove();
-                console.log('windows, it is');
+                $('#textarea').html(intro.windowsPlatform);
             } else {
-                $('.osx-textarea').show();
-                $('.windows-textarea').remove();
+                $('#textarea').html(intro.osxPlatform);
             }
 
             $('#loader').detach(); // detach the loader element from the DOM
