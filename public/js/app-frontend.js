@@ -98,6 +98,13 @@ $(window).on('load', () => {
         // 1.4 If Chrome and not mobile, show main
         if (is.chrome() || navigator.userAgent.match('CriOS') && is.not.mobile()) {
             $('#main-container').show();
+
+            if (is.windows()) {
+                $('.osx-textarea').remove();
+            } else {
+                $('.windows-textarea').remove();
+            }
+
             $('#loader').detach(); // detach the loader element from the DOM
 
             // 1.4.1 Check and set DARK MODE
@@ -256,6 +263,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const proRanger = TextareaEditor.proRanger(textareaEditor);
                 rangeStart = proRanger.start;
                 rangeEnd = proRanger.end;
+
+                console.log(winSel.selectedTexts);
             }
 
             // 2.3 Check if winSel.selectedTexts has an emoji
