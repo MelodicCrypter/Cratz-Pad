@@ -264,8 +264,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const proRanger = TextareaEditor.proRanger(textareaEditor);
                 rangeStart = proRanger.start;
                 rangeEnd = proRanger.end;
-
-                console.log(winSel.selectedTexts);
             }
 
             // 2.3 Check if winSel.selectedTexts has an emoji
