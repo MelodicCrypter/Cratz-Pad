@@ -100,8 +100,11 @@ $(window).on('load', () => {
             $('#main-container').show();
 
             if (is.windows()) {
+                $('.windows-textarea').show();
                 $('.osx-textarea').remove();
+                console.log('windows, it is');
             } else {
+                $('.osx-textarea').show();
                 $('.windows-textarea').remove();
             }
 
