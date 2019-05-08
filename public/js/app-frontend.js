@@ -102,6 +102,7 @@ $(window).on('load', () => {
 
             if (is.windows()) {
                 $('#textarea').html(intro.windowsPlatform);
+                console.log('WINDOWS');
             } else {
                 $('#textarea').html(intro.osxPlatform);
             }
