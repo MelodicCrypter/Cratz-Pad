@@ -135,8 +135,7 @@ body {
   color: #bdbdbd;
   background: transparent;
   resize: none !important;
-  height: 86vh;
-  max-height: 100vh;
+  height: 98%;
   overflow: auto;
   white-space: pre-wrap !important;
   display: inline-block !important;
@@ -328,6 +327,7 @@ body {
 }
 #main-box {
   margin-top: 70px;
+  max-height: 87%;
 }
 header {
   background: #333333;
