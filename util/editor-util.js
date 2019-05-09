@@ -333,6 +333,11 @@ function saveDataLocally(name, target) {
     }
 }
 
+function saveMacAdressLocally(name, macAdd) {
+    ls.remove(name);
+    ls.set(name, macAdd);
+}
+
 // snippet by Xeoncross, but modified it a bit
 // https://jsfiddle.net/Xeoncross/4tUDk/
 function putContentAtCaret(content, range) {
@@ -504,6 +509,7 @@ export {
     modalShow,
     modalShowMod,
     saveDataLocally,
+    saveMacAdressLocally,
     downloader,
     validateSelStrIfNot,
 };
