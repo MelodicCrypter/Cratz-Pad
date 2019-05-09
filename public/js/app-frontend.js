@@ -625,7 +625,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.metaKey || e.ctrlKey || key === 'Enter') {
             TextareaEditor.saveDataLocally(`${macAddress}allData`, textareaJQuery);
             TextareaEditor.saveMacAdressLocally('macAddress', macAddress);
-            console.log('saved');
         }
 
         // if (key === 'Del') {
@@ -696,16 +695,13 @@ document.addEventListener('DOMContentLoaded', () => {
     $(window).bind('beforeunload', () => {
         TextareaEditor.saveDataLocally(`${macAddress}allData`, textareaJQuery);
         TextareaEditor.saveMacAdressLocally('macAddress', macAddress);
-        console.log('saved');
     });
     $(textareaJQuery).on('focusout', () => {
         TextareaEditor.saveDataLocally(`${macAddress}allData`, textareaJQuery);
         TextareaEditor.saveMacAdressLocally('macAddress', macAddress);
-        console.log('saved');
     });
     $(textareaJQuery).mouseleave(() => {
         TextareaEditor.saveDataLocally(`${macAddress}allData`, textareaJQuery);
         TextareaEditor.saveMacAdressLocally('macAddress', macAddress);
-        console.log('saved');
     });
 }, false);
