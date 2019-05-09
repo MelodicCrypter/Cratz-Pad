@@ -25,10 +25,7 @@ There are two modes: <em>Dark Mode </em>🌙 and <em>Light Mode</em> ☀. Just c
 <i class="fas fa-question-circle welcome-icons"></i> click to see more details regarding Cratz Pad
 
 <strong>4. RECOMMENDED SETUP</strong>
-For <strong>Cratz Pad</strong> to function greatly, recommended setup is by using a <em>Chrome</em> browser within a <em>Desktop</em> (or <em>laptop</em>) environment.
-You can also use a tablet, however, hot-keys won't work that fully in a tablet. Unless you have an external keyboard for your tablet.
-That being said, if you don't want to use a Chrome browser you can download Cratz Pad as a <u>standalone desktop app</u>. You can do
-so by clicking the <i class="fas fa-question-circle welcome-icons"></i> menu icon below and click the corresponding link for your operating system.
+For <strong>Cratz Pad</strong> to function greatly, recommended setup is by using a <em>Chrome</em> browser within a <em>Desktop</em> (or <em>laptop</em>) environment. You can also use a tablet, however, hot-keys won't work that fully in a tablet. Unless you have an external keyboard for your tablet. That being said, if you don't want to use a Chrome browser you can download Cratz Pad as a <u>standalone desktop app</u>. You can do so by clicking the <i class="fas fa-question-circle welcome-icons"></i> menu icon below and click the corresponding link for your operating system.
 
 Enjoy! 🙌 😎
 
@@ -61,10 +58,7 @@ There are two modes: <em>Dark Mode <span class="emoji-outer emoji-sizer"><span c
 <i class="fas fa-question-circle welcome-icons"></i> click to see more details regarding Cratz Pad
 
 <strong>4. RECOMMENDED SETUP</strong>
-For <strong>Cratz Pad</strong> to function greatly, recommended setup is by using a <em>Chrome</em> browser within a <em>Desktop</em> (or <em>laptop</em>) environment.
-You can also use a tablet, however, hot-keys won't work that fully in a tablet. Unless you have an external keyboard for your tablet.
-That being said, if you don't want to use a Chrome browser you can download Cratz Pad as a <u>standalone desktop app</u>. You can do
-so by clicking the <i class="fas fa-question-circle welcome-icons"></i> menu icon below and click the corresponding link for your operating system.
+For <strong>Cratz Pad</strong> to function greatly, recommended setup is by using a <em>Chrome</em> browser within a <em>Desktop</em> (or <em>laptop</em>) environment. You can also use a tablet, however, hot-keys won't work that fully in a tablet. Unless you have an external keyboard for your tablet. That being said, if you don't want to use a Chrome browser you can download Cratz Pad as a <u>standalone desktop app</u>. You can do so by clicking the <i class="fas fa-question-circle welcome-icons"></i> menu icon below and click the corresponding link for your operating system.
 
 Enjoy! <span class="emoji-outer emoji-sizer"><span class="emoji-inner" style="background: url(e904c72d38b31ba81d2dcbf311e7d695.png);background-position:50% 64.58333333333334%;background-size:4900%" data-codepoints="1f64c"></span></span>&#8203; <span class="emoji-outer emoji-sizer"><span class="emoji-inner" style="background: url(e904c72d38b31ba81d2dcbf311e7d695.png);background-position:56.25000000000001% 68.75%;background-size:4900%" data-codepoints="1f913"></span></span>&#8203;
 `;
