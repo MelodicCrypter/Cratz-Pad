@@ -59,6 +59,8 @@ LogRocket.init('zimys9/cratz-pad');
 // ==============================================================================
 // Set up: Basic Settings before the DOM contents are loaded
 // ==============================================================================
+// 0. Get user's mac address
+const macAddress = document.getElementById('vit').innerText;
 // 1. Load .ico file
 const favicon = document.querySelector("link[rel='icon']");
 favicon.href = favIcoPath;
@@ -100,10 +102,16 @@ $(window).on('load', () => {
         if (is.chrome() || navigator.userAgent.match('CriOS') && is.not.mobile()) {
             $('#main-container').show();
 
-            if (is.windows()) {
-                $('#textarea').html(intro.windowsPlatform);
-            } else {
-                $('#textarea').html(intro.osxPlatform);
+            // 1.5
+            const receivedData = ls.get(`${macAddress}allData`);
+            if (receivedData !== null) {
+                $('#textarea').html(receivedData);
+            } else if (receivedData === null) {
+                if (is.windows()) {
+                    $('#textarea').html(intro.windowsPlatform);
+                } else {
+                    $('#textarea').html(intro.osxPlatform);
+                }
             }
 
             $('#loader').detach(); // detach the loader element from the DOM
@@ -114,19 +122,15 @@ $(window).on('load', () => {
             } else if (Cookies.get('darkmode') === 'on') {
                 // DARK MODE is ON
                 $('body').removeClass('mode-lightmode');
-                $('#mode-button').attr('aria-pressed', 'true');
-                $('#mode-button').addClass('active');
+                $('#mode-button')
+                    .attr('aria-pressed', 'true')
+                    .addClass('active');
             } else if (Cookies.get('lightmode') === 'on') {
                 // DARK MODE is OFF
                 $('body').addClass('mode-lightmode');
-                $('#mode-button').attr('aria-pressed', 'false');
-                $('#mode-button').removeClass('active');
-            }
-
-            // 1.5
-            const receivedData = ls.get('allData');
-            if (receivedData !== null) {
-                $('section[contenteditable="true"]').html(receivedData);
+                $('#mode-button')
+                    .attr('aria-pressed', 'false')
+                    .removeClass('active');
             }
 
             // 1.6
@@ -619,7 +623,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // app should save all texts to the localStorage for backup
         // this is to prevent from losing data when user quits using shortcut keys
         if (e.metaKey || e.ctrlKey || key === 'Enter') {
-            TextareaEditor.saveDataLocally('allData', textareaJQuery);
+            TextareaEditor.saveDataLocally(`${macAddress}allData`, textareaJQuery);
+            TextareaEditor.saveMacAdressLocally('macAddress', macAddress);
+            console.log('saved');
         }
 
         // if (key === 'Del') {
@@ -688,12 +694,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==============================================================================
     // =====> Save locally if window if reloaded or closed, on mouse leave, focusout
     $(window).bind('beforeunload', () => {
-        TextareaEditor.saveDataLocally('allData', textareaJQuery);
+        TextareaEditor.saveDataLocally(`${macAddress}allData`, textareaJQuery);
+        TextareaEditor.saveMacAdressLocally('macAddress', macAddress);
+        console.log('saved');
     });
     $(textareaJQuery).on('focusout', () => {
-        TextareaEditor.saveDataLocally('allData', textareaJQuery);
+        TextareaEditor.saveDataLocally(`${macAddress}allData`, textareaJQuery);
+        TextareaEditor.saveMacAdressLocally('macAddress', macAddress);
+        console.log('saved');
     });
     $(textareaJQuery).mouseleave(() => {
-        TextareaEditor.saveDataLocally('allData', textareaJQuery);
+        TextareaEditor.saveDataLocally(`${macAddress}allData`, textareaJQuery);
+        TextareaEditor.saveMacAdressLocally('macAddress', macAddress);
+        console.log('saved');
     });
 }, false);
