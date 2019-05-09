@@ -614,7 +614,14 @@ document.addEventListener('DOMContentLoaded', () => {
             document.execCommand('insertHTML', false, '&#009');
         }
 
-        // 6.
+        // 6. Special Case: to save data in localStorage
+        // every time the user presses command or control keys
+        // app should save all texts to the localStorage for backup
+        // this is to prevent from losing data when user quits using shortcut keys
+        if (e.metaKey || e.ctrlKey || key === 'Enter') {
+            TextareaEditor.saveDataLocally('allData', textareaJQuery);
+        }
+
         // if (key === 'Del') {
         //     textPreTagCount = textarea.firstElementChild.textContent.length;
         //     if (textPreTagCount === 0) {
