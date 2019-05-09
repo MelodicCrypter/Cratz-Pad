@@ -57,6 +57,11 @@ function checkWhichKey(event) {
         key = 'l';
     }
 
+    // If q was pressed
+    if (event.which === 81) {
+        key = 'q';
+    }
+
     // If r was pressed
     if (event.which === 82) {
         key = 'r';
