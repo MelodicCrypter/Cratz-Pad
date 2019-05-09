@@ -139,6 +139,7 @@ body {
   background: transparent;
   resize: none !important;
   height: 96%;
+  max-height: 97% !important;
   overflow: auto;
   white-space: pre-wrap !important;
   display: inline-block !important;
@@ -330,7 +331,8 @@ body {
 }
 #main-box {
   margin-top: 48px;
-  max-height: 90%;
+  height: 90%;
+  max-height: 90% !important;
 }
 header {
   background: #333333;
