@@ -386,7 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
             + ' You do not need to create an account, start typing right away, and you can download your file as well. That easy.'
             + ' If you want to use Cratz Pad as standalone desktop app, you can download it using these links:'
             + '<br><br>'
-            + 'Windows x32  <span class="modal-links app-link" data-whichlink="32"><img src="'}${windowsLogoPath}"></span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Windows x64 <a class="modal-links app-link" data-whichlink="64" href="" download><img src="${windowsLogoPath}"></a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Mac OS <a class="modal-links app-link" data-whichlink="0" href="" download><img src="${appleLogoPath}"></a>`
+            + 'Windows x32  <span class="modal-links app-link" data-whichlink="32"><img src="'}${windowsLogoPath}"></span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Windows x64 <span class="modal-links app-link" data-whichlink="64"><img src="${windowsLogoPath}"></span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Mac OS <span class="modal-links app-link" data-whichlink="0"><img src="${appleLogoPath}"></span>`
             + '<br><br>'
             + '<strong>Developer:</strong> Melodic Crypter'
             + '<br><br>'
@@ -714,11 +714,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const link = document.createElement('a');
         link.href = finalDownloadLinkHREF;
         link.id = 'busy';
-        link.target = '_blank';
         link.setAttribute('download', '');
         document.body.appendChild(link);
         link.click();
         link.remove();
+
+        setTimeout(() => console.clear(), 5000);
     });
 
     // ===============================================================================
