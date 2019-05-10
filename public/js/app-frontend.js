@@ -77,10 +77,10 @@ logoImgDownloadBox.src = appLogoPath;
 const loaderImgTag = document.getElementById('loader-img');
 loaderImgTag.src = loaderImgPath;
 // 6. Set desktop platform logos
-const loaderWindows1Img = document.getElementById('loader-windows1-img');
-loaderWindows1Img.src = windowsLogoPath;
-const loaderWindows2Img = document.getElementById('loader-windows2-img');
-loaderWindows2Img.src = windowsLogoPath;
+const loaderWindows32Img = document.getElementById('loader-windows32-img');
+loaderWindows32Img.src = windowsLogoPath;
+const loaderWindows64Img = document.getElementById('loader-windows64-img');
+loaderWindows64Img.src = windowsLogoPath;
 const loaderMacImg = document.getElementById('loader-mac-img');
 loaderMacImg.src = appleLogoPath;
 
@@ -151,6 +151,13 @@ $(window).on('load', () => {
 // ==================================================================================
 document.addEventListener('DOMContentLoaded', () => {
     // ==============================================================================
+    // Set up: Setting for App download links
+    // ===============================================================================
+    const windows32AppLink = 'https://s3-ap-southeast-1.amazonaws.com/cratzpad-public/downloads/CratzPad_Setup_x32.exe';
+    const windows64AppLink = 'https://s3-ap-southeast-1.amazonaws.com/cratzpad-public/downloads/CratzPad_Setup_x64.exe';
+    const macOSAppLink = 'https://s3-ap-southeast-1.amazonaws.com/cratzpad-public/downloads/Cratz+Pad.dmg';
+
+    // ==============================================================================
     // Set up: Settings for EmojiPicker and variables related to textarea
     // ===============================================================================
     // ::::Parent container of the div or textarea
@@ -162,7 +169,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ::::The 'textarea' which in this case is a contenteditable: both jQuery and vanilla
     const textarea = document.getElementById('textarea');
-    const textareaSelector = document.querySelector('[contenteditable]');
     const textareaEditor = document.getElementsByClassName('editor');
     const textareaJQuery = $('section[contenteditable="true"]');
     const downloadFilenameInput = $('input[name="download-filename"]');
@@ -380,7 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
             + ' You do not need to create an account, start typing right away, and you can download your file as well. That easy.'
             + ' If you want to use Cratz Pad as standalone desktop app, you can download it using these links:'
             + '<br><br>'
-            + 'Windows  <a class="modal-links" href="#"><img src="'}${windowsLogoPath}"></a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Mac OS <a class="modal-links" href="#"><img src="${appleLogoPath}"></a>`
+            + 'Windows x32  <span class="modal-links app-link" data-whichlink="32"><img src="'}${windowsLogoPath}"></span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Windows x64 <a class="modal-links app-link" data-whichlink="64" href="" download><img src="${windowsLogoPath}"></a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Mac OS <a class="modal-links app-link" data-whichlink="0" href="" download><img src="${appleLogoPath}"></a>`
             + '<br><br>'
             + '<strong>Developer:</strong> Melodic Crypter'
             + '<br><br>'
@@ -682,6 +688,37 @@ document.addEventListener('DOMContentLoaded', () => {
             Cookies.remove('darkmode');
             Cookies.set('lightmode', 'on', { expires: 90 });
         }
+    });
+
+    // ===============================================================================
+    // App-Link: When download links are clicked, inject respective url
+    // ==============================================================================
+    $('body').on('click', '.app-link', function (e) {
+        e.preventDefault();
+
+        const dataSpecificLink = $(this).attr('data-whichlink');
+        let finalDownloadLinkHREF;
+
+        if (dataSpecificLink === '32') {
+            finalDownloadLinkHREF = windows32AppLink;
+        }
+
+        if (dataSpecificLink === '64') {
+            finalDownloadLinkHREF = windows64AppLink;
+        }
+
+        if (dataSpecificLink === '0') {
+            finalDownloadLinkHREF = macOSAppLink;
+        }
+
+        const link = document.createElement('a');
+        link.href = finalDownloadLinkHREF;
+        link.id = 'busy';
+        link.target = '_blank';
+        link.setAttribute('download', '');
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
     });
 
     // ===============================================================================
