@@ -338,6 +338,18 @@ function saveMacAdressLocally(name, macAdd) {
     ls.set(name, macAdd);
 }
 
+// function createElement(el, attribs, funcs) {
+//     const link = document.createElement(el);
+//
+//     Object.keys(attribs).forEach(function (prop) {
+//         link.setAttribute(prop.toString(), attribs[prop]);
+//     });
+//
+//     Object.keys(funcs).forEach(function (prop) {
+//         link.`${prop()}`;
+//     });
+// }
+
 // snippet by Xeoncross, but modified it a bit
 // https://jsfiddle.net/Xeoncross/4tUDk/
 function putContentAtCaret(content, range) {
