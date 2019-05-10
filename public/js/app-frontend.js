@@ -77,8 +77,10 @@ logoImgDownloadBox.src = appLogoPath;
 const loaderImgTag = document.getElementById('loader-img');
 loaderImgTag.src = loaderImgPath;
 // 6. Set desktop platform logos
-const loaderWindowsImg = document.getElementById('loader-windows-img');
-loaderWindowsImg.src = windowsLogoPath;
+const loaderWindows1Img = document.getElementById('loader-windows1-img');
+loaderWindows1Img.src = windowsLogoPath;
+const loaderWindows2Img = document.getElementById('loader-windows2-img');
+loaderWindows2Img.src = windowsLogoPath;
 const loaderMacImg = document.getElementById('loader-mac-img');
 loaderMacImg.src = appleLogoPath;
 
