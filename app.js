@@ -14,7 +14,7 @@ const es6Renderer = require('express-es6-template-engine');
 // Set up
 const app = express();
 const port = process.env.PORT;
-const publicPath = path.join(__dirname, './public/dist/');
+const publicAssetsPath = path.join(__dirname, './public/dist/');
 const logsPath = path.join(__dirname, './log/');
 
 // View: Template engine
@@ -31,7 +31,13 @@ app.use(express.urlencoded()); // Parser for x-www-form-urlencoded
 // Middlewares ======================> Security continuation...
 app.use(hpp()); // protection against Parameter Pollution attacks
 // Middlewares ======================> Other
-app.use(express.static(publicPath)); // Static Assets
+app.use(express.static(publicAssetsPath, {
+    etag: true,
+    lastModified: true,
+    setHeaders: (res, pathz) => {
+        res.setHeader('Cache-Control', 'max-age=31536000');
+    },
+}));
 app.use(logger(`${logsPath}/app-logs.json`)); // Logs, using Winston & Express-Winston
 
 // Main routes using express.Router()
@@ -44,7 +50,7 @@ app.listen(port, () => {
     // Browser-Refresh
     // Comment this out before building for Production
     // This is only for development, to auto refresh the browser
-    // if (process.send) {
-    //     process.send('online');
-    // }
+    if (process.send) {
+        process.send('online');
+    }
 });
