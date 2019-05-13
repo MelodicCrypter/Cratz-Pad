@@ -1,7 +1,7 @@
 module.exports = {
     apps: [{
         name: 'CratzPad',
-        script: 'app-back-bundle.js',
+        script: 'app.backend.bundle.js',
 
         // Options reference: https://pm2.io/doc/en/runtime/reference/ecosystem-file/
         args: 'one two',
@@ -24,7 +24,7 @@ module.exports = {
             host: 'cratzpad.herokuapp.com',
             ref: 'origin/master',
             repo: 'git@github.com:MelodicCrypter/Cratz-Pad.git',
-            path: 'app-back-bundle.js',
+            path: 'app.backend.bundle.js',
             'post-deploy': 'yarn install && pm2-runtime reload ecosystem.config.js --env production',
         },
     },
