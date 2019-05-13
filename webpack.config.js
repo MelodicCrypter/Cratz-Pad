@@ -17,7 +17,7 @@ const frontConfig = {
     },
     output: {
         path: path.resolve(__dirname, './public/dist/'),
-        filename: '[name]-front-bundle.js',
+        filename: '[name].[contenthash].frontend.bundle.js',
     },
     watchOptions: {
         ignored: /node_modules/,
@@ -88,8 +88,19 @@ const frontConfig = {
             new TerserJSPlugin({}),
             new OptimizeCSSAssetsPlugin({}),
         ],
+        runtimeChunk: 'single',
+        splitChunks: {
+            cacheGroups: {
+                vendor: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name: 'vendors',
+                    chunks: 'all',
+                },
+            },
+        },
     },
     plugins: [
+        new webpack.HashedModuleIdsPlugin(),
         new MiniCssExtractPlugin({
             filename: '[name].css',
             chunkFilename: '[id].css',
@@ -123,7 +134,7 @@ const backConfig = {
     },
     output: {
         path: path.resolve(__dirname, './'),
-        filename: 'app-back-bundle.js',
+        filename: 'app.backend.bundle.js',
     },
     node: {
         __dirname: true,
