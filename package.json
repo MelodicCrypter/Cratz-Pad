@@ -10,7 +10,7 @@
   "private": true,
   "scripts": {
     "dev-webp": "concurrently 'webpack --config ./webpack.config.js --mode development --watch true' 'yarn dev-node'",
-    "dev-node": "browser-refresh ./app-back-bundle.js",
+    "dev-node": "browser-refresh ./app.backend.bundle.js",
     "dev-webp-pm2": "concurrently 'webpack --config ./webpack.config.js --mode development' 'pm2-runtime start ./ecosystem.config.js --env development'",
     "test": "export NODE_ENV=test || SET \"NODE_ENV=test\" && mocha tests/**/*.test.js",
     "pro-build": "webpack --config ./webpack.config.js --mode production",
@@ -32,6 +32,7 @@
     "express-es6-template-engine": "^2.1.7",
     "express-winston": "^3.1.0",
     "file-saver": "^2.0.1",
+    "find": "^0.3.0",
     "flat-color-icons": "^1.1.0",
     "getmac": "^1.4.6",
     "helmet": "^3.16.0",
