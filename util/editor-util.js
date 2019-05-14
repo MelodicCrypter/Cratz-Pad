@@ -1,8 +1,16 @@
-// Utilities for the Editor
+// =========================================================
+// =                TEXT EDITOR UTILITIES                  =
+// =========================================================
 
+// Library
 import ls from 'local-storage';
 
-// Normalizer for jQuery objects, if prefer dom nodes
+/**
+ * Normalizer for jQuery objects, if prefer dom nodes
+ *
+ * @param target
+ * @returns {*}
+ */
 function nodeNormalizer(target) {
     let domTarget = target;
 
@@ -14,20 +22,11 @@ function nodeNormalizer(target) {
     return domTarget;
 }
 
-// Used for reloading or refreshing an element's contents
-// e.g, when the user clicks an emoji, the textarea would refresh automatically
-function reloadContent(target, newContent) {
-    // Convert jquery to a dom node
-    const domTarget = nodeNormalizer(target);
-
-    // If there's no new content, just copy target's original data
-    if (!newContent) {
-        domTarget.innerHTML = target.innerHTML;
-    } else {
-        domTarget.innerHTML = newContent;
-    }
-}
-
+/**
+ * Windows Selection for mozilla
+ *
+ * @returns {}  an object containing all selections and properties
+ */
 function mozGetSelections() {
     const winSel = window.getSelection();
 
@@ -47,6 +46,11 @@ function mozGetSelections() {
     return selections;
 }
 
+/**
+ * Windows Selection for Chrome
+ *
+ * @returns {}  an object containing all selections and properties
+ */
 function chromeGetSelections() {
     const winSel = window.getSelection();
 
@@ -66,15 +70,23 @@ function chromeGetSelections() {
     return selections;
 }
 
-// Menu button enabler
-// A jQuery object
+/**
+ * Menu button enabler, a jQuery object
+ * this will enable all elements that has a disabled class
+ *
+ * @param target
+ */
 function enableMenuButtons(target) {
     if (target.hasClass('disabled')) {
         target.removeClass('disabled');
     }
 }
 
-// Menu button disabler
+/**
+ * Menu button disabler, a jQuery object
+ * this will add disabled class to the element
+ * @param target
+ */
 function disableMenuButtons(target) {
     if (!target.hasClass('disabled')) {
         target.addClass('disabled');
@@ -82,7 +94,7 @@ function disableMenuButtons(target) {
 }
 
 /**
- * This will fire up when the user clicks the buttons: B, I, U
+ * This will fire up when the user clicks the buttons: B, I, U, and Alignments Buttons
  *
  * @param o             this is the options object
  * rangeStart,          the start of the range
@@ -214,16 +226,23 @@ function textSelExecFontStyle(o) {
 
         // replace the selected texts
         document.execCommand('insertHTML', false, newContent);
-    } else if (o.newTag === 'align-all-left' || o.newTag === 'align-all-center' || o.newTag === 'align-all-right' || o.newTag === 'align-all-justify') {
+    } else if (o.newTag === 'align-all-left'
+        || o.newTag === 'align-all-center'
+        || o.newTag === 'align-all-right'
+        || o.newTag === 'align-all-justify') {
+        // All alignment names in an array
         const alignments = ['align-all-left', 'align-all-center', 'align-all-right', 'align-all-justify'];
 
+        // Remove all alignment name, just to make sure
         alignments.forEach((a) => {
             o.target.classList.remove(a.toString());
         });
 
+        // Add the new alignment name as a new class
         o.target.classList.add(o.newTag);
         o.target.focus();
 
+        // Save to local storage the user's last setting for alignment
         ls.remove('textareaAlignment');
         ls.set('textareaAlignment', o.newTag);
     } else if (o.tagGrandParent === 'div' && o.tagParent === 'main' && o.tag === 'section') {
@@ -237,6 +256,14 @@ function textSelExecFontStyle(o) {
     }
 }
 
+/**
+ * A simple string validator
+ *
+ * @param tests
+ * @param subject
+ * @param passStat
+ * @returns {boolean}
+ */
 function validateSelStr(tests, subject, passStat) {
     const testsArr = [...tests];
     const res = [];
@@ -271,29 +298,13 @@ function validateSelStr(tests, subject, passStat) {
     return false;
 }
 
-function validateSelStrIfNot(tests, subject, passStat) {
-    const testsArr = [...tests];
-    const res = [];
-
-    // Run all tests
-    testsArr.forEach((test) => {
-        if (test === 'emptyString') {
-            subject !== '' ? res.push(true) : res.push(false);
-        }
-        if (test === 'undefined') {
-            subject !== 'string' ? res.push(true) : res.push(false);
-        }
-    });
-
-    // Check res if all are true, meaning all tests past
-    if (res.length > 0) {
-        return res.every(r => r === true);
-    }
-
-    // if res is empty just return false
-    return false;
-}
-
+/**
+ * Opens the modal element and then injecting the message
+ * this is the modal with a unique customization
+ *
+ * @param targetModal
+ * @param textMsg
+ */
 function modalShowMod(targetModal, textMsg) {
     targetModal.find('.modal-dialog').addClass('modal-lg');
     targetModal.find('.modal-body').addClass('modal-modified');
@@ -306,11 +317,24 @@ function modalShowMod(targetModal, textMsg) {
     });
 }
 
+/**
+ * Opens the modal element and then injecting the message
+ * this is the ordinary modal
+ *
+ * @param targetModal
+ * @param textMsg
+ */
 function modalShow(targetModal, textMsg) {
     targetModal.find('.modal-body').text(textMsg);
     targetModal.modal('show');
 }
 
+/**
+ * A simple downloader
+ *
+ * @param filename
+ * @param data
+ */
 function downloader(filename, data) {
     const target = document.createElement('a');
     target.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(data)}`);
@@ -321,34 +345,41 @@ function downloader(filename, data) {
     document.body.removeChild(target);
 }
 
+/**
+ * Will save data (texts) to local storage
+ * so that when user opens the app again, previous work shall be served
+ *
+ * @param name
+ * @param target
+ */
 function saveDataLocally(name, target) {
+    // Remove all saved related to this key: name
     ls.remove(name);
 
     const allData = target.html();
     const dataLength = target.text().length;
 
+    // If data has length, then save
     if (dataLength > 1) {
         // Save texts here to local storage
         ls.set(name, allData);
     }
 }
 
+/**
+ * Will save user's mac address to local storage
+ * this is used for the unique naming for local storage key
+ *
+ * @param name
+ * @param macAdd
+ */
 function saveMacAdressLocally(name, macAdd) {
+    // Remove all saved related to this key: name
     ls.remove(name);
+
+    // Save
     ls.set(name, macAdd);
 }
-
-// function createElement(el, attribs, funcs) {
-//     const link = document.createElement(el);
-//
-//     Object.keys(attribs).forEach(function (prop) {
-//         link.setAttribute(prop.toString(), attribs[prop]);
-//     });
-//
-//     Object.keys(funcs).forEach(function (prop) {
-//         link.`${prop()}`;
-//     });
-// }
 
 // snippet by Xeoncross, but modified it a bit
 // https://jsfiddle.net/Xeoncross/4tUDk/
@@ -523,5 +554,4 @@ export {
     saveDataLocally,
     saveMacAdressLocally,
     downloader,
-    validateSelStrIfNot,
 };

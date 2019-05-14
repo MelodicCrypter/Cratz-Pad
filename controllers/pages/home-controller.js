@@ -2,7 +2,7 @@ const path = require('path');
 const gm = require('getmac');
 const find = require('find');
 
-// Get user's mac address
+// 1. Get user's mac address
 // this will be used for naming unique localStorage key
 let vitalData;
 gm.getMac((err, macAddress) => {
@@ -10,45 +10,38 @@ gm.getMac((err, macAddress) => {
         vitalData = 'GodIsGood777';
     }
 
+    // Final and clean mac address
     vitalData = macAddress;
 });
 
-// This will get the frontend.bundle.js files
-let appJS;
-let vendorsJS;
-let runtimeJS;
-find
-    .file(/(?:^|\W)app(?:$|\W)/, path.join(__dirname, '../../public/dist/'), (files) => {
-        appJS = files[0].replace('public/dist/', '');
-    })
-    .error((err) => {
-        if (err) {
-            //console.log(err);
-        }
-    });
+// 2. This section will get the all frontend.bundle.js files
+// and inject them to the footer.html of the app
+const filePath = path.join(path.basename(path.dirname('../')), 'public/dist/');
+const fileNames = ['app', 'runtime', 'vendors'];
+let appJS, runtimeJS, vendorsJS;
 
-find
-    .file(/(?:^|\W)runtime(?:$|\W)/, path.join(__dirname, '../../public/dist/'), (files) => {
-        runtimeJS = files[0].replace('public/dist/', '');
-    })
-    .error((err) => {
-        if (err) {
-            //console.log(err);
-        }
-    });
+// 2.1 Process each file
+fileNames.forEach((name) => {
+    // Find in the root/public/dist/ a file that has 'app', 'runtime', or 'vendors' string on it
+    const regex = new RegExp(`(?:^|\\W)${name}(?:$|\\W)`);
 
-find
-    .file(/(?:^|\W)vendors(?:$|\W)/, path.join(__dirname, '../../public/dist/'), (files) => {
-        vendorsJS = files[0].replace('public/dist/', '');
-    })
-    .error((err) => {
-        if (err) {
-            //console.log(err);
-        }
-    });
+    if (name === 'app') {
+        find.file(regex, filePath, (files) => {
+            appJS = files[0].replace('public/dist/', '');
+        });
+    } else if (name === 'runtime') {
+        find.file(regex, filePath, (files) => {
+            runtimeJS = files[0].replace('public/dist/', '');
+        });
+    } else if (name === 'vendors') {
+        find.file(regex, filePath, (files) => {
+            vendorsJS = files[0].replace('public/dist/', '');
+        });
+    }
+});
 
-// Controller for your homepage or index
-const renderHome = (req, res) => {
+// 3. Controller for your homepage or index
+function renderHome(req, res) {
     res.render('index', {
         // for es6Renderer
         locals: {
@@ -64,6 +57,6 @@ const renderHome = (req, res) => {
             footer: path.resolve('views/partials/footer.html'),
         },
     });
-};
+}
 
-module.exports = { renderHome };
+export default renderHome;

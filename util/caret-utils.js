@@ -1,6 +1,12 @@
-// Utilities for Caret or cursor
+// =========================================================
+// =                    CARET UTILITIES                    =
+// =========================================================
 
-// Get the caret position
+/**
+ * Will get the caret position
+ * @param target
+ * @returns {number}
+ */
 function getCaretPos(target) {
     const isContentEditable = target && target.contentEditable;
 
@@ -19,7 +25,10 @@ function getCaretPos(target) {
     return target.selectionStart;
 }
 
-// Snippet by ..., but modified a bit, to pur cursor at the end of texts
+/**
+ * Snippet by but modified a bit, to pur cursor at the end of texts
+ * @param target
+ */
 function putCursorAtEnd(target) {
     const textNode = target.lastChild;
     const caret = textNode.length;
@@ -35,8 +44,14 @@ function putCursorAtEnd(target) {
     sel.addRange(range);
 }
 
-// snippet by Liam
-// (https://stackoverflow.com/questions/6249095/how-to-set-caretcursor-position-in-contenteditable-element-div)
+/**
+ * snippet by Liam
+ * (https://stackoverflow.com/questions/6249095/how-to-set-caretcursor-position-in-contenteditable-element-div)
+ * @param node
+ * @param chars
+ * @param range
+ * @returns {*}
+ */
 function createRange(node, chars, range) {
     if (!range) {
         range = document.createRange();
@@ -68,7 +83,11 @@ function createRange(node, chars, range) {
     return range;
 }
 
-// snippet by Liam, but modified it, same link above
+/**
+ * snippet by Liam, but modified it, same link above
+ * @param target
+ * @param pos
+ */
 function setCaretPos(target, pos) {
     if (pos >= 0) {
         const selection = document.getSelection();

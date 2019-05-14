@@ -1,4 +1,13 @@
-// Utilities for Keyboard
+// =========================================================
+// =              UTILITY FOR KEYBOARD EVENTS              =
+// =========================================================
+
+/**
+ * Simple utility that will return a readable string for specific key pressed
+ *
+ * @param event
+ * @returns {string}
+ */
 function checkWhichKey(event) {
     let key;
 

@@ -1,6 +1,6 @@
 /*
-* This is the main SASS file, you can put all styles here.
-* But if you prefer CSS, just use the other file named: app-main-raw.styles
+* This is the main SCSS file, you can put all SCSS styles here.
+* But if you prefer CSS, just use the other file named: app-main.css. And, use that.
 * All these styles will be bundled with WebPack
 */
 
@@ -10,7 +10,7 @@
 // Bootstrap
 @import "~bootstrap/scss/bootstrap";
 
-// emoione by twizdev
+// rm-emoji-picker
 @import "~rm-emoji-picker/dist/emojipicker.css";
 
 // Public Assets
@@ -65,18 +65,22 @@ body {
     font-size: 0.99em !important;
   }
 }
+
 .cover-container {
   max-width: 100em;
 }
+
 .masthead {
   margin-bottom: 2rem;
 }
+
 .masthead-brand {
   margin-bottom: 0;
   color: #d85c72;
   font-family: Euphorigenic;
   letter-spacing: 2px;
 }
+
 .nav-masthead {
   float: right;
   top: 10px !important;
@@ -97,23 +101,15 @@ body {
     border-bottom-color: #fff;
   }
 }
+
 .nav-masthead .nav-link:hover,
 .nav-masthead .nav-link:focus {
   border-bottom-color: rgba(255, 255, 255, .25);
 }
 
-
 ::-webkit-scrollbar {
   width: 0px;
   background: transparent; /* make scrollbar transparent */
-}
-
-.hidden-on-load {
-
-}
-
-.show-on-load {
-
 }
 
 #main-container {
@@ -302,6 +298,7 @@ body {
     color: rgba(187, 187, 187, 0.48) !important;
   }
 }
+
 .modal-links {
   text-decoration: none;
 
@@ -310,18 +307,23 @@ body {
     display: inline-block;
   }
 }
+
 .bold {
   font-weight: bold;
 }
+
 .italic {
   font-style: italic;
 }
+
 .underline {
   text-decoration: underline;
 }
+
 .holder {
   display: inline !important;
 }
+
 .cover {
   padding: 0 1.5rem;
   .btn-lg {
@@ -329,14 +331,17 @@ body {
     font-weight: 700;
   }
 }
+
 .mastfoot {
   color: rgba(255, 255, 255, .5);
 }
+
 #main-box {
   margin-top: 48px;
   height: 90%;
   max-height: 90% !important;
 }
+
 header {
   background: #333333;
   .icons {
@@ -362,10 +367,12 @@ header {
 
 #footer-nav {
   background: #2d2d2d;
+
   .icons {
     font-size: 1.2em !important;
     cursor: pointer;
   }
+
   .divider {
     color: #3c3535 !important;
   }

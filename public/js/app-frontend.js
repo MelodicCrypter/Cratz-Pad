@@ -85,7 +85,7 @@ const loaderMacImg = document.getElementById('loader-mac-img');
 loaderMacImg.src = appleLogoPath;
 
 // ================================================================================
-// onLOAD: Hide loader and show the main container
+// onLOAD: Setting before showing the DOM
 // =================================================================================
 $(window).on('load', () => {
     // 1. Show main after 2 seconds
@@ -104,7 +104,7 @@ $(window).on('load', () => {
         if (is.chrome() || navigator.userAgent.match('CriOS') && is.not.mobile()) {
             $('#main-container').show();
 
-            // 1.5
+            // 1.4.1
             const receivedData = ls.get(`${macAddress}allData`);
             if (receivedData !== null) {
                 $('#textarea').html(receivedData);
@@ -116,9 +116,10 @@ $(window).on('load', () => {
                 }
             }
 
+            // 1.4.2
             $('#loader').detach(); // detach the loader element from the DOM
 
-            // 1.4.1 Check and set DARK MODE
+            // 1.4.3 Check and set DARK MODE
             if (Cookies.get('darkmode') === undefined && Cookies.get('lightmode') === undefined) {
                 // User did not set the mode, so default is ON
             } else if (Cookies.get('darkmode') === 'on') {
@@ -135,12 +136,13 @@ $(window).on('load', () => {
                     .removeClass('active');
             }
 
-            // 1.6
+            // 1.4.4 Check alignment settings
             const alignmentData = ls.get('textareaAlignment');
             if (alignmentData !== null) {
                 $('section[contenteditable="true"]').addClass(alignmentData.toString());
             }
 
+            // 1.4.5
             Caret.putCursorAtEnd(document.getElementById('textarea')); // focus on the contenteditable
         }
     }, 2000);
@@ -241,8 +243,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let caretPosition; // for the cursor position
     let rangeStart; // will hold the start of the selected range
     let rangeEnd; // will hold the end of the selected range
-    let textCount;
-    let userFinalFilename;
+    let textCount; // will hold total length of texts
+    let userFinalFilename; // will hold the final filename when user saves to .txt
 
     // ========> Listen for any texts selection
     // This event is very vital cause in this section, selectedTexts, caretPosition, and textState will be set

@@ -1,6 +1,12 @@
+// =========================================================
+// =              UTILITY FOR LOGGING REQUESTS             =
+// =========================================================
+
+// Libraries
 const expressWinston = require('express-winston');
 const winston = require('winston');
 
+// Instance
 const logger = name => expressWinston.logger({
     transports: [
         new winston.transports.File({

@@ -1,4 +1,6 @@
-// Utilities for the Button menus
+// =========================================================
+// =              UTILITIES FOR BUTTON MENUS               =
+// =========================================================
 
 /**
  * Toggle enable or disable Hot-Keys
@@ -39,8 +41,12 @@ function toggleHotKeys(target) {
     return disableShortcuts;
 }
 
+/**
+ * NOT USED
+ * @param theme
+ */
 function themeToggle(theme) {
-    console.log(theme);
+    //
 }
 
 export { themeToggle, toggleHotKeys };
